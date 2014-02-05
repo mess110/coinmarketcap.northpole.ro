@@ -14,7 +14,7 @@ doc = Nokogiri::HTML(open("http://coinmarketcap.com/"))
 
 ts = Time.now.to_i
 # order is important
-keys = ['position','name','marketCap','price','totalSupply','volume24','change24', 'id']
+keys = ['position', 'name', 'marketCap', 'price', 'totalSupply', 'volume24', 'change24', 'id']
 
 r = []
 doc.css("#currencies tbody tr").each do |tr|
