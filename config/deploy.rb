@@ -2,7 +2,7 @@
 lock '3.1.0'
 
 set :application, 'coinmarketcap.northpole.ro'
-set :repo_url, 'git@github.com:mess110/coinmarketcap.northpole.ro.git'
+set :repo_url, 'https://github.com/mess110/coinmarketcap.northpole.ro.git'
 
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
