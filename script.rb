@@ -35,14 +35,19 @@ def write_to_disk currency
     ]
     coin[-1] = tr.attribute('id').text
     h = Hash[@keys.zip(coin)]
-    File.open("#{@path}/#{currency}/#{coin[-1]}.json",'w') { |f| f.write(h.to_json) }
+
     File.open("#{@path}/#{coin[-1]}.json",'w') { |f| f.write(h.to_json) } if currency == 'usd'
+
+    currency_path = "#{@path}/#{currency}/#{coin[-1]}.json"
+    File.open("#{@path}/first_crawled/#{coin[-1]}.json",'w') { |f| f.write(h.to_json) } if !File.exists?(currency_path) && currency == 'usd'
+    File.open(currency_path,'w') { |f| f.write(h.to_json) }
+
     r << h
   end
 
   rr = { 'timestamp' => @ts, 'markets' => r }
-  File.open("#{@path}/#{currency}/all.json",'w') {|f| f.write(rr.to_json) }
   File.open("#{@path}/all.json",'w') {|f| f.write(rr.to_json) } if currency == 'usd'
+  File.open("#{@path}/#{currency}/all.json",'w') {|f| f.write(rr.to_json) }
 end
 
 write_to_disk 'usd'
