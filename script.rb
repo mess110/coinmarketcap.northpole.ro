@@ -8,7 +8,7 @@ require 'pp'
 current_folder = File.dirname(File.expand_path(__FILE__))
 @path = File.join(current_folder, 'public', 'api')
 
-@doc = Nokogiri::HTML(open("http://coinmarketcap.com/"))
+@doc = Nokogiri::HTML(open("http://coinmarketcap.com/all.html"))
 # File.open('coinmarketcap','w') {|f| @doc.write_html_to f}
 # @doc = Nokogiri::HTML(File.open('coinmarketcap', 'r'))
 
@@ -21,13 +21,26 @@ def write_to_disk currency
   r = []
   @doc.css("#currencies tbody tr").each do |tr|
     tds = tr.css('td')
+
+    # TODO clean this up
+    begin
+      td3 = tds[3].css('a').attribute("data-#{currency}").text.strip
+    rescue
+      td3 = ''
+    end
+    begin
+      td5 = tds[5].css('a').attribute("data-#{currency}").text.strip
+    rescue
+      td5 = ''
+    end
+
     coin = [
       tds[0].text.strip,
       tds[1].text.strip,
       tds[2].attribute("data-#{currency}").text.strip,
-      tds[3].css('a').attribute("data-#{currency}").text.strip,
+      td3,
       tds[4].text.strip.gsub('*', ''),
-      tds[5].css('a').attribute("data-#{currency}").text.strip,
+      td5,
       tds[6].text.strip,
       @ts,
       currency,

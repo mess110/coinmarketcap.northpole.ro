@@ -1,2 +1,3 @@
+public/api/*.json
 public/api/**/*.json
 coinmarketcap
