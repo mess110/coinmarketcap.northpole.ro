@@ -24,6 +24,11 @@ def write_to_disk currency
 
     # TODO clean this up
     begin
+      td2 = tds[2].attribute("data-#{currency}").text.strip
+    rescue
+      td2 = ''
+    end
+    begin
       td3 = tds[3].css('a').attribute("data-#{currency}").text.strip
     rescue
       td3 = ''
@@ -37,7 +42,7 @@ def write_to_disk currency
     coin = [
       tds[0].text.strip,
       tds[1].text.strip,
-      tds[2].attribute("data-#{currency}").text.strip,
+      td2,
       td3,
       tds[4].text.strip.gsub('*', ''),
       td5,
