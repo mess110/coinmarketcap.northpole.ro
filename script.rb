@@ -14,12 +14,25 @@ current_folder = File.dirname(File.expand_path(__FILE__))
 
 @ts = Time.now.to_i
 
-# order is important
-@keys = ['position', 'name', 'marketCap', 'price', 'totalSupply', 'volume24', 'change24', 'timestamp', 'currency', 'id']
+# order is important and KEEP ID AS THE LAST ELEMENT. you have been warned
+@keys = ['position', 'name', 'marketCap', 'price', 'totalSupply', 'volume24', 'change24', 'timestamp', 'currency', 'lowVolume', 'id']
 
-def write_to_disk currency
-  r = []
-  @doc.css("#currencies tbody tr").each do |tr|
+def write_one h, currency
+  File.open("#{@path}/#{h['id']}.json",'w') { |f| f.write(h.to_json) } if currency == 'usd'
+
+  currency_path = "#{@path}/#{currency}/#{h['id']}.json"
+  File.open("#{@path}/first_crawled/#{h['id']}.json",'w') { |f| f.write(h.to_json) } if !File.exists?(currency_path) && currency == 'usd'
+  File.open(currency_path,'w') { |f| f.write(h.to_json) }
+end
+
+def write_all h, currency
+  File.open("#{@path}/all.json",'w') {|f| f.write(h.to_json) } if currency == 'usd'
+  File.open("#{@path}/#{currency}/all.json",'w') {|f| f.write(h.to_json) }
+end
+
+def get_json_data table_id, currency
+  markets = []
+  @doc.css("#{table_id} tbody tr").each do |tr|
     tds = tr.css('td')
 
     # TODO clean this up
@@ -49,24 +62,22 @@ def write_to_disk currency
       tds[6].text.strip,
       @ts,
       currency,
+      table_id == '#low-volume-currencies',
       ''
     ]
-    coin[-1] = tr.attribute('id').text
-    h = Hash[@keys.zip(coin)]
-
-    File.open("#{@path}/#{coin[-1]}.json",'w') { |f| f.write(h.to_json) } if currency == 'usd'
-
-    currency_path = "#{@path}/#{currency}/#{coin[-1]}.json"
-    File.open("#{@path}/first_crawled/#{coin[-1]}.json",'w') { |f| f.write(h.to_json) } if !File.exists?(currency_path) && currency == 'usd'
-    File.open(currency_path,'w') { |f| f.write(h.to_json) }
-
-    r << h
+    coin[-1] = tr.attribute('id').text # this is why the id should be the last element
+    markets << Hash[@keys.zip(coin)]
   end
 
-  rr = { 'timestamp' => @ts, 'markets' => r }
-  File.open("#{@path}/all.json",'w') {|f| f.write(rr.to_json) } if currency == 'usd'
-  File.open("#{@path}/#{currency}/all.json",'w') {|f| f.write(rr.to_json) }
+  { 'timestamp' => @ts, 'markets' => markets }
 end
 
-write_to_disk 'usd'
-write_to_disk 'btc'
+['usd', 'btc'].each do |currency|
+  json_data = get_json_data('#currencies', currency)
+  low_volume_json_data = get_json_data('#low-volume-currencies', currency)
+  json_data['markets'].push(*low_volume_json_data['markets'])
+  json_data['markets'].each do |h|
+    write_one h, currency
+  end
+  write_all json_data, currency
+end
