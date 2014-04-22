@@ -4,6 +4,7 @@ require 'open-uri'
 require 'json'
 require 'nokogiri'
 require 'pp'
+require 'fileutils'
 
 current_folder = File.dirname(File.expand_path(__FILE__))
 @path = File.join(current_folder, 'public', 'api')
@@ -72,7 +73,9 @@ def get_json_data table_id, currency
   { 'timestamp' => @ts, 'markets' => markets }
 end
 
-['usd', 'btc'].each do |currency|
+['usd', 'btc', 'eur', 'cny', 'gdp', 'cad', 'rub'].each do |currency|
+  FileUtils.mkdir_p File.join(@path, currency)
+
   json_data = get_json_data('#currencies', currency)
   low_volume_json_data = get_json_data('#low-volume-currencies', currency)
   json_data['markets'].push(*low_volume_json_data['markets'])
