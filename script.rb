@@ -19,16 +19,28 @@ current_folder = File.dirname(File.expand_path(__FILE__))
 @keys = ['position', 'name', 'marketCap', 'price', 'totalSupply', 'volume24', 'change24', 'timestamp', 'currency', 'lowVolume', 'id']
 
 def write_one h, currency
+  # version 1
   File.open("#{@path}/#{h['id']}.json",'w') { |f| f.write(h.to_json) } if currency == 'usd'
 
+  # version 2
   currency_path = "#{@path}/#{currency}/#{h['id']}.json"
   File.open("#{@path}/first_crawled/#{h['id']}.json",'w') { |f| f.write(h.to_json) } if !File.exists?(currency_path) && currency == 'usd'
+  File.open(currency_path,'w') { |f| f.write(h.to_json) }
+
+  # version 3
+  currency_path = "#{@path}/v3/#{currency}/#{h['id']}.json"
   File.open(currency_path,'w') { |f| f.write(h.to_json) }
 end
 
 def write_all h, currency
+  # version 1
   File.open("#{@path}/all.json",'w') {|f| f.write(h.to_json) } if currency == 'usd'
+
+  # version 2
   File.open("#{@path}/#{currency}/all.json",'w') {|f| f.write(h.to_json) }
+
+  # version 3
+  File.open("#{@path}/v3/#{currency}/all.json",'w') {|f| f.write(h.to_json) }
 end
 
 def get_json_data table_id, currency
@@ -75,6 +87,7 @@ end
 
 ['usd', 'btc', 'eur', 'cny', 'gdp', 'cad', 'rub'].each do |currency|
   FileUtils.mkdir_p File.join(@path, currency)
+  FileUtils.mkdir_p File.join(@path, 'v3', currency)
 
   json_data = get_json_data('#currencies', currency)
   low_volume_json_data = get_json_data('#low-volume-currencies', currency)
