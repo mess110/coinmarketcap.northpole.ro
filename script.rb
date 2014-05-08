@@ -33,6 +33,10 @@ def old_format coin, currency
   coin
 end
 
+def write path, hash
+  File.open(path,'w') { |f| f.write(hash.to_json) }
+end
+
 # converts all coins in hash['markets'] to old json format
 def old_format_all coins, currency
   old_formatted_coins = {
@@ -40,7 +44,7 @@ def old_format_all coins, currency
     markets: []
   }
   coins['markets'].each do |market|
-    old_formatted_coins[:markets].push old_format(market, currency)
+    old_formatted_coins[:markets].push old_format(market.clone, currency)
   end
   old_formatted_coins
 end
@@ -55,41 +59,40 @@ def write_one coin
     mkdir(@path, 'v3', currency)
 
     # version 1
-    File.open("#{@path}/#{h['id']}.json",'w') { |f| f.write(h.to_json) } if currency == 'usd'
+    write("#{@path}/#{h['id']}.json", h) if currency == 'usd'
 
     # version 2
     currency_path = "#{@path}/#{currency}/#{h['id']}.json"
-    File.open("#{@path}/first_crawled/#{h['id']}.json",'w') { |f| f.write(h.to_json) } if !File.exists?(currency_path) && currency == 'usd'
-    File.open(currency_path,'w') { |f| f.write(h.to_json) }
+    write("#{@path}/first_crawled/#{h['id']}.json", h) if !File.exists?(currency_path) && currency == 'usd'
+    write(currency_path, h)
 
     # version 3
     currency_path = "#{@path}/v3/#{currency}/#{h['id']}.json"
-    File.open(currency_path,'w') { |f| f.write(h.to_json) }
+    write(currency_path, h)
   end
 
   # version 4
   mkdir(@path, 'v4')
   coin_path = "#{@path}/v4/#{coin['id']}.json"
-  File.open(coin_path, 'w') { |f| f.write(coin.to_json) }
+  write(coin_path, coin)
 end
 
 def write_all coin
-
   @currencies.each do |currency|
     h = old_format_all(coin.clone, currency)
 
     # version 1
-    File.open("#{@path}/all.json",'w') {|f| f.write(h.to_json) } if currency == 'usd'
+    write("#{@path}/all.json", h) if currency == 'usd'
 
     # version 2
-    File.open("#{@path}/#{currency}/all.json",'w') {|f| f.write(h.to_json) }
+    write("#{@path}/#{currency}/all.json", h)
 
     # version 3
-    File.open("#{@path}/v3/#{currency}/all.json",'w') {|f| f.write(h.to_json) }
+    write("#{@path}/v3/#{currency}/all.json", h)
   end
 
   # version 4
-  File.open("#{@path}/v4/all.json",'w') {|f| f.write(coin.to_json) }
+  write("#{@path}/v4/all.json", coin)
 end
 
 def get_json_data table_id
