@@ -78,6 +78,7 @@ end
 def write_all coin
   @currencies.each do |currency|
     h = old_format_all(coin.clone, currency)
+    h.delete('graphData')
 
     # version 1
     write("#{@path}/all.json", h) if currency == 'usd'
@@ -90,6 +91,8 @@ def write_all coin
   end
 
   # version 4
+  write("#{@path}/v4/graphs.json", coin['graphData'])
+  coin.delete('graphData')
   write("#{@path}/v4/all.json", coin)
 end
 
@@ -136,7 +139,14 @@ def get_json_data table_id
     markets << Hash[@keys.zip(coin)]
   end
 
-  { 'timestamp' => @ts, 'markets' => markets }
+  graph_data = {}
+  @doc.to_s.split("\n").select{|s| s.strip.start_with?('$.plot($(')}.each do |line|
+    line.strip!
+    coin_name = line[(line.index('#')+1)...line.index('")')]
+    graph_data[coin_name] = JSON.parse(line[(line.index('[{data:') + 7)..(line.index(']}]'))])
+  end
+
+  { 'timestamp' => @ts, 'markets' => markets, 'graphData' => graph_data }
 end
 
 def mkdir *strings
@@ -146,6 +156,7 @@ end
 json_data = get_json_data('#currencies')
 low_volume_json_data = get_json_data('#low-volume-currencies')
 json_data['markets'].push(*low_volume_json_data['markets'])
+json_data['graphData'].merge!(low_volume_json_data['graphData'])
 
 json_data['markets'].each do |h|
   write_one h

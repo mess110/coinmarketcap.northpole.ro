@@ -1,8 +1,33 @@
-coinmarketcap json api
-======================
+# coinmarketcap json api #
 
-A straightforward JSON API for all the currencies found on [coinmarketcap.com](http://coinmarketcap.com/ "coinmarketcap.com")
+need coinmarketcap data as json?
+--------------------------------
 
-It udates every 5 minutes
+A straightforward JSON API for all the currencies found on [coinmarketcap.com](http://coinmarketcap.com/ "coinmarketcap.com") crawled every 5 minutes
 
-It will always be [backward compatible](/compatibility.html "backward compatible")
+[backward compatible](/compatibility.html "backward compatible") api for life
+
+<br />
+
+version 4
+---------
+
+Usage: send a GET request to one of the URLs below
+
+[/api/v4/all.json](/api/v4/all.json)
+
+[/api/v4/doge.json](/api/v4/doge.json)
+
+[/api/v4/btc.json](/api/v4/btc.json)
+
+[/api/v4/graphs.json](/api/v4/graphs.json)
+
+[/api/v4/](/api/v4)
+
+<br />
+
+<br />
+
+Doge Donations: D8imeucKHsn5gZbJqN8AZX3WhjmnZyRFGA
+
+[reddit post](http://www.reddit.com/r/dogecoindev/comments/1x4sxb/coinmarketcapcom_data_as_json_http_api/ "reddit post")

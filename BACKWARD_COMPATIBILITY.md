@@ -1,0 +1,76 @@
+# coinmarketcap json api #
+
+need coinmarketcap data as json?
+--------------------------------
+
+A straightforward JSON API for all the currencies found on [coinmarketcap.com](http://coinmarketcap.com/ "coinmarketcap.com") crawled every 5 minutes
+
+[backward compatible](/doc.html "backward compatible") api for life
+
+Doge Donations: D8imeucKHsn5gZbJqN8AZX3WhjmnZyRFGA
+
+[reddit post](http://www.reddit.com/r/dogecoindev/comments/1x4sxb/coinmarketcapcom_data_as_json_http_api/ "reddit post")
+
+<br />
+
+version 4
+---------
+
+Usage: send a GET request to one of the URLs below
+
+[/api/v4/all.json](/api/v4/all.json)
+
+[/api/v4/doge.json](/api/v4/doge.json)
+
+[/api/v4/btc.json](/api/v4/btc.json)
+
+[/api/v4/graphs.json](/api/v4/graphs.json)
+
+[/api/v4/](/api/v4)
+
+<br />
+
+version 3
+---------
+
+[/api/v3/](/api/v3/)
+
+[/api/v3/btc/all.json](/api/v3/btc/all.json)
+[/api/v3/usd/all.json](/api/v3/usd/all.json)
+[/api/v3/eur/all.json](/api/v3/eur/all.json)
+
+[/api/v3/btc/doge.json](/api/v3/btc/doge.json)
+[/api/v3/usd/doge.json](/api/v3/usd/doge.json)
+[/api/v3/eur/doge.json](/api/v3/eur/doge.json)
+
+[/api/v3/btc/btc.json](/api/v3/btc/btc.json)
+[/api/v3/usd/btc.json](/api/v3/usd/btc.json)
+[/api/v3/eur/btc.json](/api/v3/eur/btc.json)
+
+<br />
+
+version 2
+---------
+
+[/api/btc/all.json](/api/btc/all.json)
+[/api/usd/all.json](/api/usd/all.json)
+
+[/api/btc/doge.json](/api/btc/doge.json)
+[/api/usd/doge.json](/api/usd/doge.json)
+
+[/api/btc/btc.json](/api/btc/btc.json)
+[/api/usd/btc.json](/api/usd/btc.json)
+
+[/api/btc/](/api/btc/)
+[/api/usd/](/api/usd/)
+
+<br />
+
+version 1
+---------
+
+[/api/all.json](/api/all.json)
+
+[/api/doge.json](/api/doge.json)
+
+[/api/btc.json](/api/btc.json)

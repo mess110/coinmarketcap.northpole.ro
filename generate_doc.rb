@@ -22,5 +22,5 @@ end
 renderer = Redcarpet::Render::HTML
 @markdown = Redcarpet::Markdown.new(renderer, autolink: true, tables: true)
 
-render_html 'README.md', 'public/index2.html'
-render_html 'BACKWARD_COMPATIBILITY.md', 'public/compatibility2.html'
+render_html 'README.md', 'public/index.html'
+render_html 'BACKWARD_COMPATIBILITY.md', 'public/doc.html'
