@@ -85,9 +85,15 @@ def get_json_data table_id, currency
   { 'timestamp' => @ts, 'markets' => markets }
 end
 
+def mkdir *strings
+  FileUtils.mkdir_p File.join(strings)
+end
+
 ['usd', 'btc', 'eur', 'cny', 'gdp', 'cad', 'rub'].each do |currency|
-  FileUtils.mkdir_p File.join(@path, currency)
-  FileUtils.mkdir_p File.join(@path, 'v3', currency)
+  mkdir(@path, currency)
+  mkdir(@path, 'v3', currency)
+  mkdir(@path, 'v4', currency)
+  mkdir(@path, 'first_crawled')
 
   json_data = get_json_data('#currencies', currency)
   low_volume_json_data = get_json_data('#low-volume-currencies', currency)
