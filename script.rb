@@ -12,7 +12,7 @@ current_folder = File.dirname(File.expand_path(__FILE__))
 @doc = Nokogiri::HTML(open("http://coinmarketcap.com/all.html"))
 
 @ts = Time.now.to_i
-@currencies = ['usd', 'btc', 'eur', 'cny', 'gdp', 'cad', 'rub']
+@currencies = ['usd', 'btc', 'eur', 'cny', 'gbp', 'cad', 'rub']
 
 # order is important and KEEP ID AS THE LAST ELEMENT. you have been warned
 @keys = ['position', 'name', 'marketCap', 'price', 'totalSupply', 'volume24', 'change24', 'timestamp', 'lowVolume', 'id']
@@ -21,11 +21,7 @@ current_folder = File.dirname(File.expand_path(__FILE__))
 def old_format coin, currency
   coin['currency'] = currency
   ['marketCap', 'price', 'volume24'].each do |key|
-    begin
-      coin[key] = coin[key][currency]
-    rescue
-      coin[key] = ''
-    end
+    coin[key] = coin[key][currency]
   end
 
   coin
