@@ -10,8 +10,6 @@ current_folder = File.dirname(File.expand_path(__FILE__))
 @path = File.join(current_folder, 'public', 'api')
 
 @doc = Nokogiri::HTML(open("http://coinmarketcap.com/all.html"))
-# File.open('coinmarketcap','w') {|f| @doc.write_html_to f}
-# @doc = Nokogiri::HTML(File.open('coinmarketcap', 'r'))
 
 @ts = Time.now.to_i
 @currencies = ['usd', 'btc', 'eur', 'cny', 'gdp', 'cad', 'rub']

@@ -14,6 +14,7 @@ GEM
     nokogiri (1.6.1)
       mini_portile (~> 0.5.0)
     rake (10.1.1)
+    redcarpet (3.1.1)
     sshkit (1.3.0)
       net-scp (>= 1.1.2)
       net-ssh
@@ -29,3 +30,4 @@ DEPENDENCIES
   capistrano
   highline
   nokogiri
+  redcarpet
