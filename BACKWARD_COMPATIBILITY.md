@@ -9,7 +9,7 @@ A straightforward JSON API for all the currencies found on [coinmarketcap.com](h
 
 Doge Donations: D8imeucKHsn5gZbJqN8AZX3WhjmnZyRFGA
 
-[reddit post](http://www.reddit.com/r/dogecoindev/comments/1x4sxb/coinmarketcapcom_data_as_json_http_api/ "reddit post")
+[subreddit](http://www.reddit.com/r/coinmarketcapjson/)
 
 <br />
 
