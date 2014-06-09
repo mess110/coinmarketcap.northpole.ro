@@ -30,5 +30,5 @@ Usage: send a GET request to one of the URLs below
 
 Doge Donations: D8imeucKHsn5gZbJqN8AZX3WhjmnZyRFGA
 
-[subreddit](http://www.reddit.com/r/coinmarketcapjson/)
-<a href="https://twitter.com/mess110" class="twitter-follow-button" data-show-count="false" data-show-screen-name="false">Follow @mess110</a>
+[/r/coinmarketcapjson](http://www.reddit.com/r/coinmarketcapjson/)
+<a href="https://twitter.com/mess110" class="twitter-follow-button" data-show-count="true" data-show-screen-name="false">Follow @mess110</a>
