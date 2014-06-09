@@ -131,7 +131,11 @@ def get_json_data table_id
       table_id == '#low-volume-currencies',
       ''
     ]
-    coin[-1] = tr.attribute('id').text # this is why the id should be the last element
+
+    coin_id = tr.attribute('id').text
+    coin_id = coin_id[3..-1] if coin_id.start_with?('id-')
+    coin[-1] = coin_id # this is why the id should be the last element
+
     markets << Hash[@keys.zip(coin)]
   end
 
