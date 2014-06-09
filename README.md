@@ -28,6 +28,8 @@ Usage: send a GET request to one of the URLs below
 
 <br />
 
+Bitcoin Donations: 1LCzNB9SmpFcdUhCXadpLzHmWAnwnuAw9k
+
 Doge Donations: D8imeucKHsn5gZbJqN8AZX3WhjmnZyRFGA
 
 [/r/coinmarketcapjson](http://www.reddit.com/r/coinmarketcapjson/)
