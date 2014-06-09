@@ -1,3 +1,7 @@
+
+    <div id="chartContainer" style="height: 200px; width: 600px; margin: 0px auto;">
+    </div>
+
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
     <script type="text/javascript">
@@ -12,5 +16,40 @@
       })();
     </script>
     <script src="report.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://canvasjs.com/assets/script/canvasjs.min.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+      window.onload = function () {
+        var dataPoints = []
+        for (var i = 0; i < GRAPH.length; i++) {
+          dataPoints.push({
+            x: new Date(GRAPH[i]['x'] * 1000),
+            y: GRAPH[i]['y']
+          });
+        }
+        var chart = new CanvasJS.Chart("chartContainer",
+        {
+          theme: "theme2",
+          title:{
+            text: "api calls - per week"
+          },
+          axisX: {
+            valueFormatString: "MMM",
+            interval:1,
+            intervalType: "week"
+          },
+          axisY:{
+            includeZero: false
+          },
+          data: [
+          {
+            type: "line",
+            lineThickness: 3,
+            dataPoints: dataPoints
+          }
+          ]
+        });
+        chart.render();
+      }
+    </script>
   </body>
 </html>

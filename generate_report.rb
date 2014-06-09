@@ -26,7 +26,7 @@ logs.each do |path|
   log_file = File.open(path)
   api_calls = log_file.each_line.select { |l| l.start_with?(web_name) }
   api_calls = api_calls.select { |l| l.include?('json') }
-  result << [log_file.mtime.to_i, api_calls.count]
+  result << { x: log_file.mtime.to_i, y: api_calls.count }
 end
 
 output_path = File.join(Dir.pwd, 'public', 'report.js')
