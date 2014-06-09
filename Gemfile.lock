@@ -5,6 +5,7 @@ GEM
       i18n
       rake (>= 10.0.0)
       sshkit (~> 1.3)
+    diff-lcs (1.2.5)
     highline (1.6.20)
     i18n (0.6.9)
     mini_portile (0.5.2)
@@ -15,6 +16,18 @@ GEM
       mini_portile (~> 0.5.0)
     rake (10.1.1)
     redcarpet (3.1.1)
+    rspec (3.0.0)
+      rspec-core (~> 3.0.0)
+      rspec-expectations (~> 3.0.0)
+      rspec-mocks (~> 3.0.0)
+    rspec-core (3.0.0)
+      rspec-support (~> 3.0.0)
+    rspec-expectations (3.0.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.0.0)
+    rspec-mocks (3.0.0)
+      rspec-support (~> 3.0.0)
+    rspec-support (3.0.0)
     sshkit (1.3.0)
       net-scp (>= 1.1.2)
       net-ssh
@@ -31,3 +44,4 @@ DEPENDENCIES
   highline
   nokogiri
   redcarpet
+  rspec
