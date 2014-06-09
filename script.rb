@@ -57,7 +57,7 @@ def write_one coin
 
     # version 2
     currency_path = "#{@path}/#{currency}/#{h['id']}.json"
-    write("#{@path}/first_crawled/#{h['id']}.json", h) if !File.exists?(currency_path) && currency == 'usd'
+    write("#{@path}/first_crawled/#{h['id']}.json", h) if !File.exist?(currency_path) && currency == 'usd'
     write(currency_path, h)
 
     # version 3
