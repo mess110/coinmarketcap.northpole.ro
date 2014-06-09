@@ -1,4 +1,6 @@
 public/api/*.json
 public/api/**/*.json
+public/index.html
+public/doc.html
 coinmarketcap
 tmp/
