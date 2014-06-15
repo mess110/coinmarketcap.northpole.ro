@@ -14,10 +14,11 @@
 # users commonly want.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+require 'fakeweb'
+FakeWeb.register_uri(:get, "http://coinmarketcap.com/all.html", :body => File.read('spec/assets/coinmarketcap'))
+
 RSpec.configure do |config|
-  config.before(:all) {
-    require './script.rb'
-  }
+  config.before(:all) { require './script.rb' }
   config.after(:all) {}
 
 =begin
