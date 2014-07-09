@@ -12,10 +12,10 @@ current_folder = File.dirname(File.expand_path(__FILE__))
 @doc = Nokogiri::HTML(open("http://coinmarketcap.com/all.html"))
 
 @ts = Time.now.to_i
-@currencies = ['usd', 'btc', 'eur', 'cny', 'gbp', 'cad', 'rub']
+@currencies = ['usd', 'btc']
 
 # order is important and KEEP ID AS THE LAST ELEMENT. you have been warned
-@keys = ['position', 'name', 'marketCap', 'price', 'totalSupply', 'volume24', 'change24', 'timestamp', 'lowVolume', 'id']
+@keys = ['position', 'name', 'symbol', 'marketCap', 'price', 'availableSupply', 'volume24', 'cange1h', 'change7h', 'change7d', 'timestamp']
 
 # converts a coin to the old json format
 def old_format coin, currency
@@ -44,52 +44,15 @@ def old_format_all coins, currency
 end
 
 def write_one coin
-  mkdir(@path, 'first_crawled')
-
-  @currencies.each do |currency|
-    h = old_format(coin.clone, currency)
-
-    mkdir(@path, currency)
-    mkdir(@path, 'v3', currency)
-
-    # version 1
-    write("#{@path}/#{h['id']}.json", h) if currency == 'usd'
-
-    # version 2
-    currency_path = "#{@path}/#{currency}/#{h['id']}.json"
-    write("#{@path}/first_crawled/#{h['id']}.json", h) if !File.exist?(currency_path) && currency == 'usd'
-    write(currency_path, h)
-
-    # version 3
-    currency_path = "#{@path}/v3/#{currency}/#{h['id']}.json"
-    write(currency_path, h)
-  end
-
-  # version 4
-  mkdir(@path, 'v4')
-  coin_path = "#{@path}/v4/#{coin['id']}.json"
+  # version 5
+  mkdir(@path, 'v5')
+  coin_path = "#{@path}/v5/#{coin['symbol']}.json"
   write(coin_path, coin)
 end
 
 def write_all coin
-  @currencies.each do |currency|
-    h = old_format_all(coin.clone, currency)
-    h.delete('graphData')
-
-    # version 1
-    write("#{@path}/all.json", h) if currency == 'usd'
-
-    # version 2
-    write("#{@path}/#{currency}/all.json", h)
-
-    # version 3
-    write("#{@path}/v3/#{currency}/all.json", h)
-  end
-
-  # version 4
-  write("#{@path}/v4/graphs.json", coin['graphData'])
-  coin.delete('graphData')
-  write("#{@path}/v4/all.json", coin)
+  # version 5
+  write("#{@path}/v5/all.json", coin)
 end
 
 def get_json_data table_id
@@ -97,66 +60,75 @@ def get_json_data table_id
   @doc.css("#{table_id} tbody tr").each do |tr|
     tds = tr.css('td')
 
-    td2 = {}
-    td3 = {}
-    td5 = {}
+    td_position = tds[0].text.strip
+    td_name = tds[1].text.strip
+    td_symbol = tds[2].text.strip
+    td_market_cap = {}
+    td_price = {}
+    td_available_supply = tds[5].css('a').text.strip
+    td_volume_24h = {}
+    td_change_1h = {}
+    td_change_24h = {}
+    td_change_7d = {}
 
     @currencies.each do |currency|
       begin
-        td2[currency] = tds[2].attribute("data-#{currency}").text.strip
+        td_market_cap[currency] = tds[3].attribute("data-#{currency}").text.strip
       rescue
-        td2[currency] = ''
+        td_market_cap[currency] = ''
       end
       begin
-        td3[currency] = tds[3].css('a').attribute("data-#{currency}").text.strip
+        td_price[currency] = tds[4].css('a').attribute("data-#{currency}").text.strip
       rescue
-        td3[currency] = ''
+        td_price[currency] = ''
       end
       begin
-        td5[currency] = tds[5].css('a').attribute("data-#{currency}").text.strip
+        td_volume_24h[currency] = tds[6].css('a').attribute("data-#{currency}").text.strip
       rescue
-        td5[currency] = ''
+        td_volume_24h[currency] = ''
+      end
+      begin
+        td_change_1h[currency] = tds[7].attribute("data-#{currency}").text.strip
+      rescue
+        td_change_1h[currency] = ''
+      end
+      begin
+        td_change_24h[currency] = tds[8].attribute("data-#{currency}").text.strip
+      rescue
+        td_change_24h[currency] = ''
+      end
+      begin
+        td_change_7d[currency] = tds[9].attribute("data-#{currency}").text.strip
+      rescue
+        td_change_7d[currency] = ''
       end
     end
 
     coin = [
-      tds[0].text.strip,
-      tds[1].text.strip,
-      td2,
-      td3,
-      tds[4].text.strip.gsub('*', ''),
-      td5,
-      tds[6].text.strip,
+      td_position,
+      td_name,
+      td_symbol,
+      td_market_cap,
+      td_price,
+      td_available_supply,
+      td_volume_24h,
+      td_change_1h,
+      td_change_24h,
+      td_change_7d,
       @ts,
-      table_id == '#low-volume-currencies',
-      ''
     ]
-
-    coin_id = tr.attribute('id').text
-    coin_id = coin_id[3..-1] if coin_id.start_with?('id-')
-    coin[-1] = coin_id # this is why the id should be the last element
 
     markets << Hash[@keys.zip(coin)]
   end
 
-  graph_data = {}
-  @doc.to_s.split("\n").select{|s| s.strip.start_with?('$.plot($(')}.each do |line|
-    line.strip!
-    coin_name = line[(line.index('#')+1)...line.index('")')]
-    graph_data[coin_name] = JSON.parse(line[(line.index('[{data:') + 7)..(line.index(']}]'))])
-  end
-
-  { 'timestamp' => @ts, 'markets' => markets, 'graphData' => graph_data }
+  { 'timestamp' => @ts, 'markets' => markets }
 end
 
 def mkdir *strings
   FileUtils.mkdir_p File.join(strings)
 end
 
-json_data = get_json_data('#currencies')
-low_volume_json_data = get_json_data('#low-volume-currencies')
-json_data['markets'].push(*low_volume_json_data['markets'])
-json_data['graphData'].merge!(low_volume_json_data['graphData'])
+json_data = get_json_data('#currencies-all')
 
 json_data['markets'].each do |h|
   write_one h

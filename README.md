@@ -7,22 +7,22 @@ A straightforward JSON API for all the currencies found on [coinmarketcap.com](h
 
 [backward compatible](http://coinmarketcap.northpole.ro/doc.html "backward compatible") api for life
 
+Breaking news: coinmarketcat changed, broke the api. currently fixing it. get in touch on reddit/twitter if you have questions
+
 <br />
 
-version 4
+version 5
 ---------
 
 Usage: send a GET request to one of the URLs below
 
-[/api/v4/all.json](http://coinmarketcap.northpole.ro/api/v4/all.json)
+[/api/v5/all.json](http://coinmarketcap.northpole.ro/api/v5/all.json)
 
-[/api/v4/doge.json](http://coinmarketcap.northpole.ro/api/v4/doge.json)
+[/api/v5/doge.json](http://coinmarketcap.northpole.ro/api/v5/DOGE.json)
 
-[/api/v4/btc.json](http://coinmarketcap.northpole.ro/api/v4/btc.json)
+[/api/v5/btc.json](http://coinmarketcap.northpole.ro/api/v5/BTC.json)
 
-[/api/v4/graphs.json](http://coinmarketcap.northpole.ro/api/v4/graphs.json)
-
-[/api/v4/](http://coinmarketcap.northpole.ro/api/v4/)
+[/api/v5/](http://coinmarketcap.northpole.ro/api/v4/)
 
 <br />
 
