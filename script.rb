@@ -43,7 +43,26 @@ def old_format_all coins, currency
   old_formatted_coins
 end
 
+def to_v1_format coin
+  {
+    "position"=> coin['position'],
+    "name"=> coin['name'],
+    "marketCap"=> coin['marketCap']['usd'],
+    "price"=> coin['price']['usd'],
+    "totalSupply"=> coin['availableSupply'],
+    "volume24"=> coin['volume24']['usd'],
+    "change24"=> "0.0 %",
+    "timestamp"=> coin['timestamp'],
+    "lowVolume"=> false,
+    "id"=> coin['symbol'].downcase,
+    "currency"=> 'usd'
+  }
+end
+
 def write_one coin
+  # version 1
+  write("#{@path}/#{coin['symbol'].downcase}.json", to_v1_format(coin))
+
   # version 5
   mkdir(@path, 'v5')
   coin_path = "#{@path}/v5/#{coin['symbol']}.json"
@@ -51,6 +70,16 @@ def write_one coin
 end
 
 def write_all coin
+  # version 1
+  h = {
+    "timestamp"=> coin['timestamp'],
+    "markets"=> []
+  }
+  coin['markets'].each do |c|
+    h['markets'] << to_v1_format(c)
+  end
+  write("#{@path}/all.json", h)
+
   # version 5
   write("#{@path}/v5/all.json", coin)
 end
