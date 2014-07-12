@@ -62,9 +62,18 @@ def to_v1_format coin, currency='usd'
   }
 end
 
+def to_v2_format coin, currency='usd'
+  to_v1_format(coin, currency)
+end
+
 def write_one coin
   # version 1
   write("#{@path}/#{coin['symbol'].downcase}.json", to_v1_format(coin))
+
+  # version 2
+  @currencies.each do |currency|
+    write("#{@path}/#{currency}/#{coin['symbol'].downcase}.json", to_v2_format(coin, currency))
+  end
 
   # version 5
   mkdir(@path, 'v5')
@@ -82,6 +91,18 @@ def write_all coin
     h['markets'] << to_v1_format(c)
   end
   write("#{@path}/all.json", h)
+
+  # version 2
+  h = {
+    "timestamp"=> coin['timestamp'],
+    "markets"=> []
+  }
+  @currencies.each do |currency|
+    coin['markets'].each do |c|
+      h['markets'] << to_v2_format(c, currency)
+    end
+    write("#{@path}/#{currency}/all.json", h)
+  end
 
   # version 5
   write("#{@path}/v5/all.json", coin)
@@ -107,32 +128,32 @@ def get_json_data table_id
       begin
         td_market_cap[currency] = tds[3].attribute("data-#{currency}").text.strip
       rescue
-        td_market_cap[currency] = ''
+        td_market_cap[currency] = '?'
       end
       begin
         td_price[currency] = tds[4].css('a').attribute("data-#{currency}").text.strip
       rescue
-        td_price[currency] = ''
+        td_price[currency] = '?'
       end
       begin
         td_volume_24h[currency] = tds[6].css('a').attribute("data-#{currency}").text.strip
       rescue
-        td_volume_24h[currency] = ''
+        td_volume_24h[currency] = '0.0 %'
       end
       begin
         td_change_1h[currency] = tds[7].attribute("data-#{currency}").text.strip
       rescue
-        td_change_1h[currency] = ''
+        td_change_1h[currency] = '?'
       end
       begin
         td_change_24h[currency] = tds[8].attribute("data-#{currency}").text.strip
       rescue
-        td_change_24h[currency] = ''
+        td_change_24h[currency] = '?'
       end
       begin
         td_change_7d[currency] = tds[9].attribute("data-#{currency}").text.strip
       rescue
-        td_change_7d[currency] = ''
+        td_change_7d[currency] = '?'
       end
     end
 
