@@ -15,7 +15,7 @@ current_folder = File.dirname(File.expand_path(__FILE__))
 @currencies = ['usd', 'btc']
 
 # order is important and KEEP ID AS THE LAST ELEMENT. you have been warned
-@keys = ['position', 'name', 'symbol', 'marketCap', 'price', 'availableSupply', 'volume24', 'cange1h', 'change7h', 'change7d', 'timestamp']
+@keys = ['position', 'name', 'symbol', 'marketCap', 'price', 'availableSupply', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
 
 # converts a coin to the old json format
 def old_format coin, currency
@@ -43,19 +43,22 @@ def old_format_all coins, currency
   old_formatted_coins
 end
 
-def to_v1_format coin
+def to_v1_format coin, currency='usd'
   {
     "position"=> coin['position'],
     "name"=> coin['name'],
-    "marketCap"=> coin['marketCap']['usd'],
+    "marketCap"=> coin['marketCap'][currency],
     "price"=> coin['price']['usd'],
     "totalSupply"=> coin['availableSupply'],
-    "volume24"=> coin['volume24']['usd'],
+    "volume24"=> coin['volume24'][currency],
     "change24"=> "0.0 %",
+    "change1h"=> coin['change1h'][currency],
+    "change7h"=> coin['change7h'][currency],
+    "change7d"=> coin['change7d'][currency],
     "timestamp"=> coin['timestamp'],
     "lowVolume"=> false,
     "id"=> coin['symbol'].downcase,
-    "currency"=> 'usd'
+    "currency"=> currency
   }
 end
 
