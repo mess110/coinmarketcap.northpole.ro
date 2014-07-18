@@ -5,7 +5,7 @@ need coinmarketcap data as json?
 
 A straightforward JSON API for all the currencies found on [coinmarketcap.com](http://coinmarketcap.com/ "coinmarketcap.com") crawled every 5 minutes
 
-[backward compatible](http://coinmarketcap.northpole.ro/doc.html "backward compatible") api for life
+[backward compatible](http://coinmarketcap.northpole.ro/doc.html "backward compatible")
 
 Breaking news: coinmarketcat changed, broke the api. currently fixing it. get in touch on reddit/twitter if you have questions
 

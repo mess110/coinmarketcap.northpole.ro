@@ -5,7 +5,7 @@ need coinmarketcap data as json?
 
 A straightforward JSON API for all the currencies found on [coinmarketcap.com](http://coinmarketcap.com/ "coinmarketcap.com") crawled every 5 minutes
 
-[backward compatible](/doc.html "backward compatible") api for life
+[backward compatible](http://coinmarketcap.northpole.ro/doc.html "backward compatible")
 
 Doge Donations: D8imeucKHsn5gZbJqN8AZX3WhjmnZyRFGA
 
@@ -13,7 +13,7 @@ Doge Donations: D8imeucKHsn5gZbJqN8AZX3WhjmnZyRFGA
 
 <br />
 
-version 4
+version 4 - discontinued
 ---------
 
 Usage: send a GET request to one of the URLs below
@@ -30,7 +30,7 @@ Usage: send a GET request to one of the URLs below
 
 <br />
 
-version 3
+version 3 - discontinued
 ---------
 
 [/api/v3/](http://coinmarketcap.northpole.ro/api/v3/)
