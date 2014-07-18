@@ -13,6 +13,7 @@ current_folder = File.dirname(File.expand_path(__FILE__))
 
 @ts = Time.now.to_i
 @currencies = ['usd', 'btc']
+@exchange_currencies = ['usd', 'eur', 'cny', 'gbp', 'cad', 'rub', 'hkd']
 
 # order is important and KEEP ID AS THE LAST ELEMENT. you have been warned
 @keys = ['position', 'name', 'symbol', 'marketCap', 'price', 'availableSupply', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
@@ -76,7 +77,6 @@ def write_one coin
   end
 
   # version 5
-  mkdir(@path, 'v5')
   coin_path = "#{@path}/v5/#{coin['symbol']}.json"
   write(coin_path, coin)
 end
@@ -110,6 +110,13 @@ end
 
 def get_json_data table_id
   markets = []
+
+  cer = @doc.css("#currency-exchange-rates")
+  currency_exchange_rates = {}
+  @exchange_currencies.each do |currency|
+    currency_exchange_rates[currency] = cer.attribute("data-#{currency}").text.strip
+  end
+
   @doc.css("#{table_id} tbody tr").each do |tr|
     tds = tr.css('td')
 
@@ -157,6 +164,20 @@ def get_json_data table_id
       end
     end
 
+    def convert number, currency, currency_exchange_rates
+      (number['usd'].to_f / currency_exchange_rates[currency].to_f).to_s rescue '?'
+    end
+
+    @exchange_currencies.each do |currency|
+      p td_market_cap['usd'].to_i
+      td_market_cap[currency] = convert(td_market_cap, currency, currency_exchange_rates) #(td_market_cap['usd'].to_i * currency_exchange_rates[currency].to_i).to_s
+      td_price[currency] = convert(td_price, currency, currency_exchange_rates)
+      td_volume_24h[currency] = '0.0.%'
+      td_change_1h[currency] = convert(td_change_1h, currency, currency_exchange_rates)
+      td_change_24h[currency] = convert(td_change_24h, currency, currency_exchange_rates)
+      td_change_7d[currency] = convert(td_change_7d, currency, currency_exchange_rates)
+    end
+
     coin = [
       td_position,
       td_name,
@@ -174,12 +195,18 @@ def get_json_data table_id
     markets << Hash[@keys.zip(coin)]
   end
 
-  { 'timestamp' => @ts, 'markets' => markets }
+  { 'timestamp' => @ts, 'markets' => markets, 'currencyExchangeRates' => currency_exchange_rates }
 end
 
 def mkdir *strings
   FileUtils.mkdir_p File.join(strings)
 end
+
+mkdir(@path, 'btc')
+mkdir(@path, 'usd')
+mkdir(@path, 'v3')
+mkdir(@path, 'v4')
+mkdir(@path, 'v5')
 
 json_data = get_json_data('#currencies-all')
 
