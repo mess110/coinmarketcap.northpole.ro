@@ -18,9 +18,9 @@ Usage: send a GET request to one of the URLs below
 
 [/api/v5/all.json](http://coinmarketcap.northpole.ro/api/v5/all.json)
 
-[/api/v5/doge.json](http://coinmarketcap.northpole.ro/api/v5/DOGE.json)
+[/api/v5/DOGE.json](http://coinmarketcap.northpole.ro/api/v5/DOGE.json)
 
-[/api/v5/btc.json](http://coinmarketcap.northpole.ro/api/v5/BTC.json)
+[/api/v5/BTC.json](http://coinmarketcap.northpole.ro/api/v5/BTC.json)
 
 [/api/v5/](http://coinmarketcap.northpole.ro/api/v4/)
 
