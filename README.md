@@ -22,7 +22,7 @@ Usage: send a GET request to one of the URLs below
 
 [/api/v5/BTC.json](http://coinmarketcap.northpole.ro/api/v5/BTC.json)
 
-[/api/v5/](http://coinmarketcap.northpole.ro/api/v4/)
+[/api/v5/](http://coinmarketcap.northpole.ro/api/v5/)
 
 <br />
 
