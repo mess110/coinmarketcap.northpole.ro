@@ -13,7 +13,7 @@ Doge Donations: D8imeucKHsn5gZbJqN8AZX3WhjmnZyRFGA
 
 <br />
 
-version 4 - discontinued
+version 4
 ---------
 
 Usage: send a GET request to one of the URLs below
