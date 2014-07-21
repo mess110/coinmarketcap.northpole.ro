@@ -171,7 +171,7 @@ def get_json_data table_id
     @exchange_currencies.each do |currency|
       td_market_cap[currency] = convert(td_market_cap, currency, currency_exchange_rates) #(td_market_cap['usd'].to_i * currency_exchange_rates[currency].to_i).to_s
       td_price[currency] = convert(td_price, currency, currency_exchange_rates)
-      td_volume_24h[currency] = '0.0.%'
+      td_volume_24h[currency] = '0.0 %'
       td_change_1h[currency] = td_change_1h['usd']
       td_change_24h[currency] = td_change_24h['usd']
       td_change_7d[currency] = td_change_7d['usd']
