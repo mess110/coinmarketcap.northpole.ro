@@ -80,7 +80,7 @@ def to_v4_format coin
     change7h: coin['change7h'],
     change7d: coin['change7d'],
     timestamp: coin['timestamp'],
-    lowvolume: false,
+    lowVolume: false,
     id: coin['symbol'].downcase
   }
 end
