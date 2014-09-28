@@ -7,8 +7,6 @@ A straightforward JSON API for all the currencies found on [coinmarketcap.com](h
 
 [backward compatible](http://coinmarketcap.northpole.ro/doc.html "backward compatible")
 
-Breaking news: coinmarketcat changed, broke the api. currently fixing it. get in touch on reddit/twitter if you have questions
-
 <br />
 
 version 5
