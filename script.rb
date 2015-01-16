@@ -16,7 +16,7 @@ current_folder = File.dirname(File.expand_path(__FILE__))
 @exchange_currencies = ['usd', 'eur', 'cny', 'gbp', 'cad', 'rub', 'hkd']
 
 # order is important and KEEP ID AS THE LAST ELEMENT. you have been warned
-@keys = ['position', 'name', 'symbol', 'marketCap', 'price', 'availableSupply', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
+@keys = ['position', 'name', 'symbol', 'marketCap', 'price', 'availableSupply', 'availableSupplyNumber', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
 
 # converts a coin to the old json format
 def old_format coin, currency
@@ -155,7 +155,13 @@ def get_json_data table_id
     td_symbol = tds[2].text.strip
     td_market_cap = {}
     td_price = {}
-    td_available_supply = tds[5].css('a').text.strip
+    begin
+      td_available_supply = tds[5].css('a').text.strip
+      td_available_supply_number = td_available_supply.gsub(',','').to_i
+    rescue
+      td_available_supply = '?'
+      td_available_supply_number = '?'
+    end
     td_volume_24h = {}
     td_change_1h = {}
     td_change_24h = {}
@@ -214,6 +220,7 @@ def get_json_data table_id
       td_market_cap,
       td_price,
       td_available_supply,
+      td_available_supply_number,
       td_volume_24h,
       td_change_1h,
       td_change_24h,
