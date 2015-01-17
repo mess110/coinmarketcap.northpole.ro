@@ -147,7 +147,9 @@ def get_json_data table_id
     currency_exchange_rates[currency] = cer.attribute("data-#{currency}").text.strip
   end
 
-  @doc.css("#{table_id} tbody tr").each do |tr|
+  # reverse is needed because
+  # https://www.reddit.com/r/coinmarketcapjson/comments/2pqvwi/amazing_service_thank_you_very_much/cmz6sxr
+  @doc.css("#{table_id} tbody tr").reverse.each do |tr|
     tds = tr.css('td')
 
     td_position = tds[0].text.strip
