@@ -13,7 +13,7 @@ current_folder = File.dirname(File.expand_path(__FILE__))
 
 @ts = Time.now.to_i
 @currencies = ['usd', 'btc']
-@exchange_currencies = ['usd', 'eur', 'cny', 'gbp', 'cad', 'rub', 'hkd']
+@exchange_currencies = ['usd', 'eur', 'cny', 'gbp', 'cad', 'rub', 'hkd', 'jpy', 'aud']
 
 # order is important and KEEP ID AS THE LAST ELEMENT. you have been warned
 @keys = ['position', 'name', 'symbol', 'marketCap', 'price', 'availableSupply', 'availableSupplyNumber', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
