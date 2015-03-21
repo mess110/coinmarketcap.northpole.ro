@@ -26,10 +26,23 @@ Usage: send a GET request to one of the URLs below
 
 <br />
 
-Bitcoin Donations: 1LCzNB9SmpFcdUhCXadpLzHmWAnwnuAw9k
+community projects
+------------------
 
-Doge Donations: D8imeucKHsn5gZbJqN8AZX3WhjmnZyRFGA
+[python cli](https://github.com/abitfan/coinmarketcap-cli)
+[crypto services](http://www.cryptoblox.com/)
+[XMR Android widget](https://play.google.com/store/apps/details?id=tr.monerostatus)
+
+want to add your project to the list?
+
+<br />
 
 [/r/coinmarketcapjson](http://www.reddit.com/r/coinmarketcapjson/)
 
 <a href="https://twitter.com/mess110" class="twitter-follow-button" data-show-count="true" data-show-screen-name="false">Follow @mess110</a>
+
+<br />
+
+Bitcoin Donations: 1LCzNB9SmpFcdUhCXadpLzHmWAnwnuAw9k
+
+Doge Donations: D8imeucKHsn5gZbJqN8AZX3WhjmnZyRFGA
