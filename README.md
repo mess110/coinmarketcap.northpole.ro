@@ -3,7 +3,7 @@
 need coinmarketcap data as json?
 --------------------------------
 
-A straightforward JSON API for all the currencies found on [coinmarketcap.com](http://coinmarketcap.com/ "coinmarketcap.com") crawled every 5 minutes
+A straightforward JSON API for all the currencies and assets found on [coinmarketcap.com](http://coinmarketcap.com/ "coinmarketcap.com") crawled every 5 minutes
 
 [backward compatible](http://coinmarketcap.northpole.ro/doc.html "backward compatible")
 

@@ -3,13 +3,9 @@
 need coinmarketcap data as json?
 --------------------------------
 
-A straightforward JSON API for all the currencies found on [coinmarketcap.com](http://coinmarketcap.com/ "coinmarketcap.com") crawled every 5 minutes
+A straightforward JSON API for all the currencies and assets found on [coinmarketcap.com](http://coinmarketcap.com/ "coinmarketcap.com") crawled every 5 minutes
 
 [backward compatible](http://coinmarketcap.northpole.ro/doc.html "backward compatible")
-
-Doge Donations: D8imeucKHsn5gZbJqN8AZX3WhjmnZyRFGA
-
-[subreddit](http://www.reddit.com/r/coinmarketcapjson/)
 
 <br />
 
@@ -74,3 +70,15 @@ version 1
 [/api/doge.json](http://coinmarketcap.northpole.ro/api/doge.json)
 
 [/api/btc.json](http://coinmarketcap.northpole.ro/api/btc.json)
+
+<br />
+
+[/r/coinmarketcapjson](http://www.reddit.com/r/coinmarketcapjson/)
+
+<a href="https://twitter.com/mess110" class="twitter-follow-button" data-show-count="true" data-show-screen-name="false">Follow @mess110</a>
+
+<br />
+
+Bitcoin Donations: 1LCzNB9SmpFcdUhCXadpLzHmWAnwnuAw9k
+
+Doge Donations: D8imeucKHsn5gZbJqN8AZX3WhjmnZyRFGA

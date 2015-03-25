@@ -9,14 +9,14 @@ require 'fileutils'
 current_folder = File.dirname(File.expand_path(__FILE__))
 @path = File.join(current_folder, 'public', 'api')
 
-@doc = Nokogiri::HTML(open("http://coinmarketcap.com/all.html"))
+@doc = Nokogiri::HTML(open("http://coinmarketcap.com/all/views/all/"))
 
 @ts = Time.now.to_i
 @currencies = ['usd', 'btc']
 @exchange_currencies = ['usd', 'eur', 'cny', 'gbp', 'cad', 'rub', 'hkd', 'jpy', 'aud']
 
 # order is important and KEEP ID AS THE LAST ELEMENT. you have been warned
-@keys = ['position', 'name', 'symbol', 'marketCap', 'price', 'availableSupply', 'availableSupplyNumber', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
+@keys = ['position', 'name', 'symbol', 'category', 'marketCap', 'price', 'availableSupply', 'availableSupplyNumber', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
 
 # converts a coin to the old json format
 def old_format coin, currency
@@ -101,6 +101,7 @@ def write_one coin
   write(coin_path, coin)
 end
 
+# writes all.json for all API versions.
 def write_all coin
   # version 1
   h = {
@@ -155,6 +156,11 @@ def get_json_data table_id
     td_position = tds[0].text.strip
     td_name = tds[1].text.strip
     td_symbol = tds[2].text.strip
+    begin
+      td_category = tds[1].css('a')[0]['href'].include?('assets') ? 'asset' : 'currency'
+    rescue
+      td_category = '?'
+    end
     td_market_cap = {}
     td_price = {}
     begin
@@ -207,7 +213,7 @@ def get_json_data table_id
     end
 
     @exchange_currencies.each do |currency|
-      td_market_cap[currency] = convert(td_market_cap, currency, currency_exchange_rates) #(td_market_cap['usd'].to_i * currency_exchange_rates[currency].to_i).to_s
+      td_market_cap[currency] = convert(td_market_cap, currency, currency_exchange_rates)
       td_price[currency] = convert(td_price, currency, currency_exchange_rates)
       td_volume_24h[currency] = '0.0 %'
       td_change_1h[currency] = td_change_1h['usd']
@@ -219,6 +225,7 @@ def get_json_data table_id
       td_position,
       td_name,
       td_symbol,
+      td_category,
       td_market_cap,
       td_price,
       td_available_supply,
