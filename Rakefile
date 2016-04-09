@@ -65,6 +65,14 @@ namespace :generate do
 
     File.write('public/full_report.js', s)
   end
+
+  desc 'count total api calls'
+  task :count_total do
+    report = File.read('public/full_report.js')
+    report.gsub!('var GRAPH = ', '')
+    report.gsub!(';', '')
+    puts JSON.parse(report).map{ |e| e['y'] }.inject(:+)
+  end
 end
 
 task :default => :spec
