@@ -5,6 +5,8 @@ need coinmarketcap data as json?
 
 A straightforward JSON API for all the currencies and assets found on [coinmarketcap.com](http://coinmarketcap.com/ "coinmarketcap.com") crawled every 5 minutes
 
+We also do [daily snapshots](http://coinmarketcap.northpole.ro/api/v5/history/) of the data so you can view it evolving over time.
+
 [backward compatible](http://coinmarketcap.northpole.ro/doc.html "backward compatible")
 
 <br />
@@ -20,7 +22,11 @@ Usage: send a GET request to one of the URLs below
 
 [/api/v5/BTC.json](http://coinmarketcap.northpole.ro/api/v5/BTC.json)
 
+[/api/v5/history/BTC_2016.json](http://coinmarketcap.northpole.ro/api/v5/history/BTC_2016.json)
+
 [/api/v5/](http://coinmarketcap.northpole.ro/api/v5/)
+
+[/api/v5/history/](http://coinmarketcap.northpole.ro/api/v5/history/)
 
 <br />
 
