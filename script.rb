@@ -9,7 +9,11 @@ require 'fileutils'
 current_folder = File.dirname(File.expand_path(__FILE__))
 @path = File.join(current_folder, 'public', 'api')
 
-@doc = Nokogiri::HTML(open("http://coinmarketcap.com/all/views/all/"))
+cmc_data = open("http://coinmarketcap.com/all/views/all/")
+@doc = Nokogiri::HTML(cmc_data)
+
+# File.write('static.html', cmc_data.read)
+# @doc = Nokogiri::HTML(File.read('static.html'))
 
 @ts = Time.now.to_i
 @currencies = ['usd', 'btc']
@@ -99,6 +103,23 @@ def write_one coin
   # version 5
   coin_path = "#{@path}/v5/#{coin['symbol']}.json"
   write(coin_path, coin)
+  write_history(coin)
+end
+
+def write_history coin
+  time_at = Time.at(@ts)
+  path = "#{@path}/v5/history/#{coin['symbol']}_#{time_at.year}.json"
+
+  write(path, { 'symbol' => coin['symbol'], 'history' => {} }) unless File.exists?(path)
+
+  if coin['symbol'] == 'BTC'
+    hash = JSON.parse(File.read(path))
+    key = time_at.strftime('%d-%m-%Y')
+    unless hash['history'].key?(key)
+      hash['history'][key] = coin
+      write(path, hash)
+    end
+  end
 end
 
 # writes all.json for all API versions.
@@ -252,6 +273,7 @@ mkdir(@path, 'usd')
 mkdir(@path, 'v3')
 mkdir(@path, 'v4')
 mkdir(@path, 'v5')
+mkdir(@path, 'v5/history')
 
 json_data = get_json_data('#currencies-all')
 
