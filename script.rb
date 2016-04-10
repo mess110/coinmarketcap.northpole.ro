@@ -112,13 +112,11 @@ def write_history coin
 
   write(path, { 'symbol' => coin['symbol'], 'history' => {} }) unless File.exists?(path)
 
-  if coin['symbol'] == 'BTC'
-    hash = JSON.parse(File.read(path))
-    key = time_at.strftime('%d-%m-%Y')
-    unless hash['history'].key?(key)
-      hash['history'][key] = coin
-      write(path, hash)
-    end
+  hash = JSON.parse(File.read(path))
+  key = time_at.strftime('%d-%m-%Y')
+  unless hash['history'].key?(key)
+    hash['history'][key] = coin
+    write(path, hash)
   end
 end
 
