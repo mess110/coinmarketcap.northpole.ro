@@ -17,7 +17,8 @@ convert strings to numbers;
 remove availableSupplyNumber;
 
 add new currencies;
-add converting history to v6 feature
+add converting history to v6 feature;
+replace '?' with nil
 
 <br />
 

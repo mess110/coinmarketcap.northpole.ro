@@ -90,24 +90,29 @@ def to_v4_format coin
 end
 
 def to_v6_format coin
+  def to_general_number n
+    return nil if n == '?' || n == nil
+    n.to_f
+  end
+
   coin_clone = coin.clone
   # this will ensure the order
   coin_clone['change24h'] = coin_clone.delete('change7h')
   coin_clone['change7d'] = coin_clone.delete('change7d')
   coin_clone['timestamp'] = coin_clone.delete('timestamp')
 
-  coin_clone['change1h'] = coin_clone['change1h']['usd'].to_f
-  coin_clone['change24h'] = coin_clone['change24h']['usd'].to_f
-  coin_clone['change7d'] = coin_clone['change7d']['usd'].to_f
+  coin_clone['change1h'] = to_general_number(coin_clone['change1h']['usd'])
+  coin_clone['change24h'] = to_general_number(coin_clone['change24h']['usd'])
+  coin_clone['change7d'] = to_general_number(coin_clone['change7d']['usd'])
 
-  coin_clone['volume24'] = coin_clone['volume24']['btc'].to_f
+  coin_clone['volume24'] = to_general_number(coin_clone['volume24']['btc'])
   coin_clone['availableSupply'] = coin_clone.delete('availableSupplyNumber')
 
   coin_clone['position'] = coin_clone['position'].to_i
 
   ['marketCap', 'price'].each do |key|
     coin_clone[key].keys.each do |currency|
-      coin_clone[key][currency] = coin_clone[key][currency].to_f
+      coin_clone[key][currency] = to_general_number(coin_clone[key][currency])
     end
   end
   coin_clone
