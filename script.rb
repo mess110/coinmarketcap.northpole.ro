@@ -300,7 +300,7 @@ def mkdir *strings
   FileUtils.mkdir_p File.join(strings)
 end
 
-def run_script
+def mkdirs
   mkdir(@path, 'btc')
   mkdir(@path, 'usd')
   mkdir(@path, 'v3')
@@ -309,7 +309,10 @@ def run_script
   mkdir(@path, 'v5/history')
   mkdir(@path, 'v6')
   mkdir(@path, 'v6/history')
+end
 
+def run_script
+  mkdirs
   json_data = get_json_data('#currencies-all')
 
   json_data['markets'].each do |h|
@@ -319,6 +322,7 @@ def run_script
 end
 
 def convert_history_v5_v6
+  mkdirs
   Dir["#{@path}/v5/history/*.json"].each do |path|
     hash = JSON.parse(File.read(path))
     next if hash['history'].nil?
@@ -349,7 +353,7 @@ Example usage:
   ./script.rb run
   ruby script.rb run
 
-EOF
+  EOF
 end
 
 if ARGV.empty?
