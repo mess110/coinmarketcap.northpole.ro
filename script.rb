@@ -89,6 +89,30 @@ def to_v4_format coin
   }
 end
 
+def to_v6_format coin
+  coin_clone = coin.clone
+  # this will ensure the order
+  coin_clone['change24h'] = coin_clone.delete('change7h')
+  coin_clone['change7d'] = coin_clone.delete('change7d')
+  coin_clone['timestamp'] = coin_clone.delete('timestamp')
+
+  coin_clone['change1h'] = coin_clone['change1h']['usd'].to_f
+  coin_clone['change24h'] = coin_clone['change24h']['usd'].to_f
+  coin_clone['change7d'] = coin_clone['change7d']['usd'].to_f
+
+  coin_clone['volume24'] = coin_clone['volume24']['btc'].to_f
+  coin_clone['availableSupply'] = coin_clone.delete('availableSupplyNumber')
+
+  coin_clone['position'] = coin_clone['position'].to_i
+
+  ['marketCap', 'price'].each do |key|
+    coin_clone[key].keys.each do |currency|
+      coin_clone[key][currency] = coin_clone[key][currency].to_f
+    end
+  end
+  coin_clone
+end
+
 def write_one coin
   # version 1
   write("#{@path}/#{coin['symbol'].downcase}.json", to_v1_format(coin))
@@ -103,12 +127,17 @@ def write_one coin
   # version 5
   coin_path = "#{@path}/v5/#{coin['symbol']}.json"
   write(coin_path, coin)
-  write_history(coin)
+
+  # version 6
+  coin_path = "#{@path}/v6/#{coin['symbol']}.json"
+  v6_coin = to_v6_format(coin)
+  write(coin_path, v6_coin)
+  write_history(v6_coin)
 end
 
 def write_history coin
   time_at = Time.at(@ts)
-  path = "#{@path}/v5/history/#{coin['symbol']}_#{time_at.year}.json"
+  path = "#{@path}/v6/history/#{coin['symbol']}_#{time_at.year}.json"
 
   write(path, { 'symbol' => coin['symbol'], 'history' => {} }) unless File.exists?(path)
 
@@ -266,16 +295,67 @@ def mkdir *strings
   FileUtils.mkdir_p File.join(strings)
 end
 
-mkdir(@path, 'btc')
-mkdir(@path, 'usd')
-mkdir(@path, 'v3')
-mkdir(@path, 'v4')
-mkdir(@path, 'v5')
-mkdir(@path, 'v5/history')
+def run_script
+  mkdir(@path, 'btc')
+  mkdir(@path, 'usd')
+  mkdir(@path, 'v3')
+  mkdir(@path, 'v4')
+  mkdir(@path, 'v5')
+  mkdir(@path, 'v5/history')
+  mkdir(@path, 'v6')
+  mkdir(@path, 'v6/history')
 
-json_data = get_json_data('#currencies-all')
+  json_data = get_json_data('#currencies-all')
 
-json_data['markets'].each do |h|
-  write_one h
+  json_data['markets'].each do |h|
+    write_one h
+  end
+  write_all json_data
 end
-write_all json_data
+
+def convert_history_v5_v6
+  Dir["#{@path}/v5/history/*.json"].each do |path|
+    hash = JSON.parse(File.read(path))
+    next if hash['history'].nil?
+    next if hash['history'].empty?
+    hash['history'].keys.each do |day|
+      target = hash['history'][day]
+      next if hash['history'][day]['position'].is_a? Numeric
+      hash['history'][day] = to_v6_format(target)
+    end
+    new_path = path.gsub('/api/v5/history', '/api/v6/history')
+    write(new_path, hash)
+  end
+end
+
+def help
+  puts <<-EOF
+This is the CLI which gathers all the data from coinmarketcap.com
+
+List of commands:
+
+  * run - queries coinmarketcap.com, parses the data and writes it to disk
+  * convert_history_v5_v6 - converts history from v5 to v6
+  * help - this text
+
+Example usage:
+
+  ./script.rb
+  ./script.rb run
+  ruby script.rb run
+
+EOF
+end
+
+if ARGV.empty?
+  run_script
+else
+  case ARGV[0]
+  when 'run'
+    run_script
+  when 'convert_history_v5_v6'
+    convert_history_v5_v6
+  else
+    help
+  end
+end

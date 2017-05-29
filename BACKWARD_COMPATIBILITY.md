@@ -9,10 +9,47 @@ A straightforward JSON API for all the currencies and assets found on [coinmarke
 
 <br />
 
-version 4
+version 6
 ---------
 
-Usage: send a GET request to one of the URLs below
+change7h renamed to change24h;
+convert strings to numbers;
+remove availableSupplyNumber;
+
+add new currencies;
+add converting history to v6 feature
+
+<br />
+
+[/api/v6/all.json](http://coinmarketcap.northpole.ro/api/v6/all.json)
+[/api/v6/doge.json](http://coinmarketcap.northpole.ro/api/v6/doge.json)
+[/api/v6/btc.json](http://coinmarketcap.northpole.ro/api/v6/btc.json)
+
+[/api/v6/](http://coinmarketcap.northpole.ro/api/v6/)
+[/api/v6/history/](http://coinmarketcap.northpole.ro/api/v6/history/)
+[/api/v6/history/btc_2017.json](http://coinmarketcap.northpole.ro/api/v6/history/btc_2017.json)
+
+<br />
+
+version 5
+---------
+
+[/api/v5/all.json](http://coinmarketcap.northpole.ro/api/v5/all.json)
+
+[/api/v5/DOGE.json](http://coinmarketcap.northpole.ro/api/v5/DOGE.json)
+
+[/api/v5/BTC.json](http://coinmarketcap.northpole.ro/api/v5/BTC.json)
+
+[/api/v5/history/BTC_2017.json](http://coinmarketcap.northpole.ro/api/v5/history/BTC_2017.json)
+
+[/api/v5/](http://coinmarketcap.northpole.ro/api/v5/)
+
+[/api/v5/history/](http://coinmarketcap.northpole.ro/api/v5/history/)
+
+<br />
+
+version 4
+---------
 
 [/api/v4/all.json](http://coinmarketcap.northpole.ro/api/v4/all.json)
 
