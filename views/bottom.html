@@ -1,5 +1,7 @@
 
-    <div id="chartContainer" style="height: 200px; width: 1000px; margin: 0px auto;">
+    <div style="text-align: left; color: rgba(0, 0, 0, 0.4); padding-left: 14px; font-size: 12px">million</div>
+    <div id="chartContainer" style="height: 240px; margin: 0px auto;">
+        <div class="ct-chart"></div>
     </div>
 
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
@@ -16,41 +18,27 @@
       })();
     </script>
     <script src="full_report.js" type="text/javascript" charset="utf-8"></script>
-    <script src="http://canvasjs.com/assets/script/canvasjs.min.js" type="text/javascript" charset="utf-8"></script>
+
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+    <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+
     <script type="text/javascript">
       window.onload = function () {
         var totalRequests = GRAPH.map(function (e) { return e.y }).reduce(function(a, b) { return a + b; }, 0);
         console.log(totalRequests + " total requests");
-        var dataPoints = []
+
+        var data = { labels: [], series: [[]]};
         for (var i = 0; i < GRAPH.length; i++) {
-          dataPoints.push({
-            x: new Date(GRAPH[i]['x'] * 1000),
-            y: GRAPH[i]['y']
-          });
-        }
-        var chart = new CanvasJS.Chart("chartContainer",
-        {
-          theme: "theme2",
-          title:{
-            text: "api calls - per month"
-          },
-          axisX: {
-            valueFormatString: "MMM YYYY",
-            interval: 1,
-            intervalType: "month"
-          },
-          axisY:{
-            includeZero: false
-          },
-          data: [
-          {
-            type: "line",
-            lineThickness: 3,
-            dataPoints: dataPoints
+          data.series[0].push(GRAPH[i]['y'] / 1000000);
+          if (i % 12 == 0) {
+            var dt = new Date(GRAPH[i]['x'] * 1000);
+            data.labels.push(dt.getFullYear());
+          } else {
+            data.labels.push('');
           }
-          ]
-        });
-        chart.render();
+        };
+
+        new Chartist.Line('.ct-chart', data, { height: 240, low: 0, high: 40 });
       }
     </script>
   </body>
