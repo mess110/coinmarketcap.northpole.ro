@@ -190,6 +190,11 @@ def write_all coin
 
   # version 5
   write("#{@path}/v5/all.json", coin)
+
+  # version 6
+  all_clone = coin.clone
+  all_clone['markets'] = all_clone['markets'].map { |e| to_v6_format(e) }
+  write("#{@path}/v6/all.json", all_clone)
 end
 
 def get_json_data table_id
