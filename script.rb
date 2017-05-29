@@ -17,7 +17,7 @@ cmc_data = open("http://coinmarketcap.com/all/views/all/")
 
 @ts = Time.now.to_i
 @currencies = ['usd', 'btc']
-@exchange_currencies = ['usd', 'eur', 'cny', 'gbp', 'cad', 'rub', 'hkd', 'jpy', 'aud']
+@exchange_currencies = %w(usd aud brl cad chf cny eur gbp hkd idr inr jpy krw mxn rub)
 
 # order is important and KEEP ID AS THE LAST ELEMENT. you have been warned
 @keys = ['position', 'name', 'symbol', 'category', 'marketCap', 'price', 'availableSupply', 'availableSupplyNumber', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
