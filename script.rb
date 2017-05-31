@@ -349,11 +349,11 @@ def update_to_volume_v6
   mkdirs
   Dir["#{@path}/v6/history/*.json"].each do |path|
     hash = JSON.parse(File.read(path))
-    next if !hash['volume24'].is_a? Numeric
     next if hash['history'].nil?
     next if hash['history'].empty?
     hash['history'].keys.each do |day|
       target = hash['history'][day]
+      next if !target['volume24'].is_a? Numeric
       volume_hash = {}
       @exchange_currencies.each do |ec|
         next if target['price'][ec].nil?
