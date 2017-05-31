@@ -5,6 +5,7 @@ require 'json'
 require 'nokogiri'
 require 'pp'
 require 'fileutils'
+require 'bigdecimal'
 
 current_folder = File.dirname(File.expand_path(__FILE__))
 @path = File.join(current_folder, 'public', 'api')
@@ -113,9 +114,9 @@ def to_v6_format coin
       coin_clone[key][currency] = to_general_number(coin_clone[key][currency])
     end
   end
-
   coin_clone['volume24'].keys.each do |currency|
-    coin_clone['volume24'][currency] = coin_clone['volume24']['btc'].to_f * coin_clone['price'][currency].to_f
+    btc_price = BigDecimal(coin_clone['price'][currency].to_s) / BigDecimal(coin_clone['price']['btc'].to_s)
+    coin_clone['volume24'][currency] = btc_price.nan? ? 0.to_f : (BigDecimal(coin_clone['volume24']['btc'].to_s) * btc_price).to_f
   end
 
   coin_clone
@@ -270,7 +271,7 @@ def get_json_data table_id
     end
 
     def convert number, currency, currency_exchange_rates
-      (number['usd'].to_f / currency_exchange_rates[currency].to_f).to_s rescue '?'
+      (BigDecimal(number['usd'].to_s) / BigDecimal(currency_exchange_rates[currency].to_s)).to_f.to_s rescue '?'
     end
 
     @exchange_currencies.each do |currency|
@@ -356,8 +357,9 @@ def update_to_volume_v6
       next if !target['volume24'].is_a? Numeric
       volume_hash = {}
       @exchange_currencies.each do |ec|
-        next if target['price'][ec].nil?
-        volume_hash[ec] = target['volume24'] * target['price'][ec].to_f
+        # next if target['price'][ec].nil?
+        btc_price = BigDecimal(target['price'][ec].to_s) / BigDecimal(target['price']['btc'].to_s)
+        volume_hash[ec] = btc_price.nan? ? 0.to_f : (BigDecimal(target['volume24']['btc'].to_s) * btc_price).to_f
       end
       target['volume24'] = volume_hash
     end
