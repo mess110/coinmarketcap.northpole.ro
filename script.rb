@@ -354,7 +354,6 @@ def update_to_volume_v6
     next if hash['history'].empty?
     hash['history'].keys.each do |day|
       target = hash['history'][day]
-      next if !target['volume24'].is_a? Numeric
       volume_hash = {}
       @exchange_currencies.each do |ec|
         # next if target['price'][ec].nil?
