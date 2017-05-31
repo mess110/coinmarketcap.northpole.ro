@@ -4,6 +4,7 @@
 require 'json'
 require 'date'
 
+puts 'getting logs'
 if `hostname`.chomp == 'northpole'
   puts 'production environment detected'
   `scp -p /var/log/apache2/other_*.gz tmp/logs/`
@@ -12,6 +13,7 @@ else
   `scp -p kiki@northpole.ro:/var/log/apache2/other_*.gz tmp/logs/`
 end
 
+puts 'extracting archives'
 `gunzip --force tmp/logs/*.gz`
 
 def mtime s
