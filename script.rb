@@ -104,8 +104,6 @@ def to_v6_format coin
   coin_clone['change1h'] = to_general_number(coin_clone['change1h']['usd'])
   coin_clone['change24h'] = to_general_number(coin_clone['change24h']['usd'])
   coin_clone['change7d'] = to_general_number(coin_clone['change7d']['usd'])
-
-  coin_clone['volume24'] = to_general_number(coin_clone['volume24']['btc'])
   coin_clone['availableSupply'] = coin_clone.delete('availableSupplyNumber')
 
   coin_clone['position'] = coin_clone['position'].to_i
@@ -115,6 +113,12 @@ def to_v6_format coin
       coin_clone[key][currency] = to_general_number(coin_clone[key][currency])
     end
   end
+
+  coin_clone['volume24'].keys.each do |currency|
+    next if currency == 'btc'
+    coin_clone['volume24'][currency] = coin_clone['volume24']['btc'].to_f * coin_clone['price'][currency].to_f
+  end
+
   coin_clone
 end
 
@@ -342,6 +346,26 @@ def convert_history_v5_v6
   end
 end
 
+def update_to_volume_v6
+  mkdirs
+  Dir["#{@path}/v6/history/*.json"].each do |path|
+    hash = JSON.parse(File.read(path))
+    next if !hash['volume24'].is_a? Numeric
+    next if hash['history'].nil?
+    next if hash['history'].empty?
+    hash['history'].keys.each do |day|
+      target = hash['history'][day]
+      volume_hash = {}
+      @exchange_currencies.each do |ec|
+        next if target['price'][ec].nil?
+        volume_hash[ec] = target['volume24'] * target['price'][ec].to_f
+      end
+      target['volume24'] = volume_hash
+    end
+    write(path, hash)
+  end
+end
+
 def help
   puts <<-EOF
 This is the CLI which gathers all the data from coinmarketcap.com
@@ -369,6 +393,8 @@ else
     run_script
   when 'convert_history_v5_v6'
     convert_history_v5_v6
+  when 'update_to_volume_v6'
+    update_to_volume_v6
   else
     help
   end
