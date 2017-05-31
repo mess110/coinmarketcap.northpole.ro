@@ -115,7 +115,6 @@ def to_v6_format coin
   end
 
   coin_clone['volume24'].keys.each do |currency|
-    next if currency == 'btc'
     coin_clone['volume24'][currency] = coin_clone['volume24']['btc'].to_f * coin_clone['price'][currency].to_f
   end
 
@@ -374,6 +373,7 @@ List of commands:
 
   * run - queries coinmarketcap.com, parses the data and writes it to disk
   * convert_history_v5_v6 - converts history from v5 to v6
+  * update_to_volume_v6
   * help - this text
 
 Example usage:
