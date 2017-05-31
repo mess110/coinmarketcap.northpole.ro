@@ -354,11 +354,15 @@ def update_to_volume_v6
     next if hash['history'].empty?
     hash['history'].keys.each do |day|
       target = hash['history'][day]
+      next if !target['volume24'].is_a?(Numeric)
       volume_hash = {}
-      @exchange_currencies.each do |ec|
-        # next if target['price'][ec].nil?
+      target['price'].keys.each do |ec|
         btc_price = BigDecimal(target['price'][ec].to_s) / BigDecimal(target['price']['btc'].to_s)
-        volume_hash[ec] = btc_price.nan? ? 0.to_f : (BigDecimal(target['volume24']['btc'].to_s) * btc_price).to_f
+        if target['volume24'].nil?
+          volume_hash[ec] = 0.to_f
+        else
+          volume_hash[ec] = btc_price.nan? ? 0.to_f : (BigDecimal(target['volume24'].to_s) * btc_price).to_f
+        end
       end
       target['volume24'] = volume_hash
     end
