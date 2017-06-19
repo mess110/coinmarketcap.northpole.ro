@@ -358,10 +358,10 @@ def update_to_volume_v6
       volume_hash = {}
       target['price'].keys.each do |ec|
         btc_price = BigDecimal(target['price'][ec].to_s) / BigDecimal(target['price']['btc'].to_s)
-        if target['volume24'].nil?
+        if target['volume24'].nil? || btc_price.nan?
           volume_hash[ec] = 0.to_f
         else
-          volume_hash[ec] = btc_price.nan? ? 0.to_f : (BigDecimal(target['volume24'].to_s) * btc_price).to_f
+          volume_hash[ec] = (BigDecimal(target['volume24'].to_s) * btc_price).to_f
         end
       end
       target['volume24'] = volume_hash
