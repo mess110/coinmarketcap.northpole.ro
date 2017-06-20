@@ -25,7 +25,7 @@ class Ki::Model
     end
 
     unless allowed_versions.include?(params['version'])
-      raise Ki::ApiError.new("Version #{params['version']} does not support this API call")
+      raise Ki::ApiError.new("Version '#{params['version']}' not supported. Valid versions are #{allowed_versions.join(', ')}")
     end
   end
 end
@@ -52,8 +52,8 @@ class Ticker < Ki::Model
 
       json['total_pages'] = json['markets'].size / size
       json['markets'] = json['markets'].slice(page * size, size) || []
-      json['next_page'] = page < json['total_pages'] ? "/ticker.json?version=#{params['version']}&page=#{page + 1}&size=#{size}" : nil
       json['prev_page'] = page >= 1 ? "/ticker.json?version=#{params['version']}&page=#{page - 1}&size=#{size}" : nil
+      json['next_page'] = page < json['total_pages'] ? "/ticker.json?version=#{params['version']}&page=#{page + 1}&size=#{size}" : nil
       json['current_page'] = page
       json['current_size'] = size
     end

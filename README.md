@@ -16,12 +16,11 @@ version 6
 
 usage: send a get request to one of the urls below
 
-[/ticker.json](http://coinmarketcap.northpole.ro/ticker.json)
+[/ticker.json?select=BTC,DOGE](http://coinmarketcap.northpole.ro/ticker.json?select=BTC,DOGE)
 [/coins.json](http://coinmarketcap.northpole.ro/coins.json)
 
-[/ticker.json?page=2](http://coinmarketcap.northpole.ro/ticker.json?page=2)
-[/ticker.json?page=2&size=10](http://coinmarketcap.northpole.ro/ticker.json?page=2&size=10)
-[/ticker.json?select=BTC,DOGE](http://coinmarketcap.northpole.ro/ticker.json?select=BTC,DOGE)
+[/ticker.json?page=1&size=10](http://coinmarketcap.northpole.ro/ticker.json?page=1&size=10)
+[/ticker.json?version=v6](http://coinmarketcap.northpole.ro/ticker.json?version=v6)
 
 [/api/v6/history/BTC_2017.json](http://coinmarketcap.northpole.ro/api/v6/history/BTC_2017.json)
 
