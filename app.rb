@@ -30,17 +30,20 @@ class Ki::Model
   end
 end
 
-class Api < Ki::Model
+class Ticker < Ki::Model
   def after_all
     validate_version
 
     json = JSON.parse(File.read(File.join('public', 'api', params['version'], 'all.json')))
+    json['markets'] = json['markets'].reverse
 
     if params['select'].present?
       coins = params['select'].is_a?(Array) ? params['select'] : params['select'].split(',')
       coins.uniq!
       json['markets'] = json['markets'].select { |coin| coins.include? coin['symbol'] }
-    elsif params['page'].present?
+    end
+
+    if params['page'].present?
       page = params['page'].to_i
       page = 0 if page <= 0
 
@@ -48,27 +51,29 @@ class Api < Ki::Model
       size = 20 if size <= 0
 
       json['total_pages'] = json['markets'].size / size
-      json['markets'] = json['markets'].reverse.slice(page * size, size) || []
+      json['markets'] = json['markets'].slice(page * size, size) || []
+      json['next_page'] = page < json['total_pages'] ? "/ticker.json?version=#{params['version']}&page=#{page + 1}&size=#{size}" : nil
+      json['prev_page'] = page >= 1 ? "/ticker.json?version=#{params['version']}&page=#{page - 1}&size=#{size}" : nil
       json['current_page'] = page
       json['current_size'] = size
-    else
-      raise Ki::ApiError.new("Params missing. Either use ('select') OR ('page' " \
-                             "and 'size'). Default page = 0, default size = 20, " \
-                             "select accepts a comma separated list of coin " \
-                             "symbols.")
     end
 
     @result = json
   end
 end
 
-class Ticker < Api
+class Api < Ticker
 end
 
-# Used to list all coins
 class Coins < Ki::Model
   def after_all
     validate_version
-    @result = Dir["public/api/#{params['version']}/*.json"].map { |e| e.split('/').last.split('.').first }.sort
+    @result = Dir["public/api/#{params['version']}/*.json"].map { |e| e.split('/').last.split('.').first }.sort.map { |coin_symbol|
+      {
+        symbol: coin_symbol,
+        ticker: "/ticker.json?select=#{coin_symbol}&version=#{params['version']}",
+        history: "/api/#{params['version']}/history/#{coin_symbol}_2017.json"
+      }
+    }
   end
 end
