@@ -28,6 +28,10 @@ class Ki::Model
       raise Ki::ApiError.new("Version '#{params['version']}' not supported. Valid versions are #{allowed_versions.join(', ')}")
     end
   end
+
+  def coin_symbols
+    Dir["public/api/#{params['version']}/*.json"].map { |e| e.split('/').last.split('.').first }.sort
+  end
 end
 
 class Ticker < Ki::Model
@@ -65,10 +69,36 @@ end
 class Api < Ticker
 end
 
+class History < Ki::Model
+  def after_all
+    validate_version
+
+    unless coin_symbols.include?(params['coin'])
+      raise Ki::ApiError.new("Invalid coin '#{params['coin']}'. See '/coins.json' for valid coins")
+    end
+
+    if params['year'].blank?
+      params['year'] = Time.new.year
+    else
+      if params['year'].to_s.size != 4 || params['year'].to_s != params['year'].to_i.to_s
+        raise Ki::ApiError.new("Invalid year #{params['year']}")
+      end
+    end
+
+    begin
+      json = JSON.parse(File.read(File.join('public', 'api', params['version'], 'history', "#{params['coin']}_#{params['year']}.json")))
+    rescue Errno::ENOENT
+      raise Ki::ApiError.new("No history for #{params['coin']} in year #{params['year']}")
+    end
+
+    @result = json
+  end
+end
+
 class Coins < Ki::Model
   def after_all
     validate_version
-    @result = Dir["public/api/#{params['version']}/*.json"].map { |e| e.split('/').last.split('.').first }.sort.map { |coin_symbol|
+    @result = coin_symbols.map { |coin_symbol|
       {
         symbol: coin_symbol,
         ticker: "/ticker.json?select=#{coin_symbol}&version=#{params['version']}",

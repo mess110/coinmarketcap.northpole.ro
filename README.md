@@ -22,7 +22,7 @@ usage: send a get request to one of the urls below
 [/ticker.json?page=1&size=10](http://coinmarketcap.northpole.ro/ticker.json?page=1&size=10)
 [/ticker.json?version=v6](http://coinmarketcap.northpole.ro/ticker.json?version=v6)
 
-[/api/v6/history/BTC_2017.json](http://coinmarketcap.northpole.ro/api/v6/history/BTC_2017.json)
+[/history.json?coin=BTC&year=2017](http://coinmarketcap.northpole.ro/history.json?coin=BTC&year=2017)
 
 <br />
 
