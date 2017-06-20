@@ -10,11 +10,32 @@ class Object
   end
 end
 
-class Api < Ki::Model
+class Ki::Model
   forbid :create, :update, :delete
 
+  def allowed_versions
+    %w(v5 v6)
+  end
+
+  def validate_version
+    if params['version'].present?
+      params['version'] = "v#{params['version']}" unless params['version'].start_with?('v')
+    else
+      params['version'] = 'v6'
+    end
+
+    unless allowed_versions.include?(params['version'])
+      raise Ki::ApiError.new("Version #{params['version']} does not support this API call")
+    end
+  end
+end
+
+class Api < Ki::Model
   def after_all
-    json = JSON.parse(File.read(File.join('public', 'api', 'v6', 'all.json')))
+    validate_version
+
+    json = JSON.parse(File.read(File.join('public', 'api', params['version'], 'all.json')))
+
     if params['select'].present?
       coins = params['select'].is_a?(Array) ? params['select'] : params['select'].split(',')
       coins.uniq!
@@ -38,5 +59,16 @@ class Api < Ki::Model
     end
 
     @result = json
+  end
+end
+
+class Ticker < Api
+end
+
+# Used to list all coins
+class Coins < Ki::Model
+  def after_all
+    validate_version
+    @result = Dir["public/api/#{params['version']}/*.json"].map { |e| e.split('/').last.split('.').first }.sort
   end
 end
