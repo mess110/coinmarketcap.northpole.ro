@@ -152,7 +152,14 @@ def write_history coin
 
   hash = JSON.parse(File.read(path))
   key = time_at.strftime('%d-%m-%Y')
-  unless hash['history'].key?(key)
+
+  if hash['history'].key?(key)
+    # we want to keep the "stronger" coin
+    if hash['history'][key]['name'] != coin['name']
+      hash['history'][key] = coin
+      write(path, hash)
+    end
+  else
     hash['history'][key] = coin
     write(path, hash)
   end
