@@ -32,7 +32,6 @@ community projects
 ------------------
 
 [python cli](https://github.com/abitfan/coinmarketcap-cli)
-[crypto services](http://www.cryptoblox.com/)
 [XMR Android widget](https://play.google.com/store/apps/details?id=tr.monerostatus)
 
 want to add your project to the list?
