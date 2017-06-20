@@ -102,7 +102,7 @@ class Coins < Ki::Model
       {
         symbol: coin_symbol,
         ticker: "/ticker.json?select=#{coin_symbol}&version=#{params['version']}",
-        history: "/api/#{params['version']}/history/#{coin_symbol}_2017.json"
+        history: "/history.json?coin=#{coin_symbol}&year=2017"
       }
     }
   end
