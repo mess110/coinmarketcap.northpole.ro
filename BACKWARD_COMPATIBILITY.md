@@ -23,12 +23,12 @@ replace '?' with nil
 <br />
 
 [/api/v6/all.json](http://coinmarketcap.northpole.ro/api/v6/all.json)
-[/api/v6/doge.json](http://coinmarketcap.northpole.ro/api/v6/doge.json)
-[/api/v6/btc.json](http://coinmarketcap.northpole.ro/api/v6/btc.json)
+[/api/v6/DOGE.json](http://coinmarketcap.northpole.ro/api/v6/DOGE.json)
+[/api/v6/BTC.json](http://coinmarketcap.northpole.ro/api/v6/BTC.json)
 
 [/api/v6/](http://coinmarketcap.northpole.ro/api/v6/)
 [/api/v6/history/](http://coinmarketcap.northpole.ro/api/v6/history/)
-[/api/v6/history/btc_2017.json](http://coinmarketcap.northpole.ro/api/v6/history/btc_2017.json)
+[/api/v6/history/BTC_2017.json](http://coinmarketcap.northpole.ro/api/v6/history/BTC_2017.json)
 
 <br />
 
