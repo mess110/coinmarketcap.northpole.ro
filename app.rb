@@ -89,11 +89,14 @@ class History < Ki::Model
       raise Ki::ApiError.new("Invalid coin '#{params['coin']}'. See '/coins.json' for valid coins")
     end
 
+    params['year'] = params['period']
     if params['year'].blank?
       params['year'] = Time.new.year
     else
-      if params['year'].to_s.size != 4 || params['year'].to_s != params['year'].to_i.to_s
-        raise Ki::ApiError.new("Invalid year #{params['year']}")
+      if params['year'] != '14days'
+        if params['year'].to_s.size != 4 || params['year'].to_s != params['year'].to_i.to_s
+          raise Ki::ApiError.new("Invalid year #{params['year']}")
+        end
       end
     end
 
@@ -115,7 +118,6 @@ class History < Ki::Model
       raise Ki::ApiError.new("No history for #{params['coin']} in year #{params['year']}")
     end
 
-    json['dateFormat'] = 'dd-MM-yyyy'
     @result = json
   end
 end

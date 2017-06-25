@@ -142,6 +142,25 @@ def write_one coin
   v6_coin = to_v6_format(coin)
   write(coin_path, v6_coin)
   write_history(v6_coin)
+  write_hourly(v6_coin)
+end
+
+def write_hourly coin
+  time_at = Time.at(@ts)
+  path = "#{@path}/v6/history/#{coin['symbol']}_14days.json"
+
+  write(path, { 'symbol' => coin['symbol'], 'history' => {} }) unless File.exists?(path)
+
+  hash = JSON.parse(File.read(path))
+  key = time_at.strftime('%H-%d-%m-%Y')
+
+  whistory hash, key, coin, path
+
+  to_cleanup_hash = JSON.parse(File.read(path))
+  while to_cleanup_hash['history'].keys.size > 24 * 14
+    to_cleanup_hash['history'].delete(to_cleanup_hash['history'].keys.first)
+  end
+  write(path, to_cleanup_hash)
 end
 
 def write_history coin
@@ -153,6 +172,10 @@ def write_history coin
   hash = JSON.parse(File.read(path))
   key = time_at.strftime('%d-%m-%Y')
 
+  whistory hash, key, coin, path
+end
+
+def whistory hash, key, coin, path
   if hash['history'].key?(key)
     # we want to keep the "stronger" coin
     if hash['history'][key]['name'] != coin['name']
