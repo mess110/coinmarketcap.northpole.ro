@@ -30,7 +30,11 @@ class Ki::Model
   end
 
   def coin_symbols
-    Dir["public/api/#{params['version']}/*.json"].map { |e| e.split('/').last.split('.').first }.sort
+    Dir[coin_symbols_dir].map { |e| e.split('/').last.split('.').first }.sort
+  end
+
+  def coin_symbols_dir
+    "public/api/#{params['version']}/*.json"
   end
 end
 
@@ -70,6 +74,14 @@ class Api < Ticker
 end
 
 class History < Ki::Model
+  def allowed_versions
+    %w(v6 v7)
+  end
+
+  def coin_symbols_dir
+    "public/api/v6/*.json"
+  end
+
   def after_all
     validate_version
 
@@ -86,11 +98,24 @@ class History < Ki::Model
     end
 
     begin
-      json = JSON.parse(File.read(File.join('public', 'api', params['version'], 'history', "#{params['coin']}_#{params['year']}.json")))
+      json = JSON.parse(File.read(File.join('public', 'api', 'v6', 'history', "#{params['coin']}_#{params['year']}.json")))
+
+      if params['version'] == 'v7'
+        history = []
+
+        json['history'].keys.each do |day|
+          json['history'][day]['date'] = day
+          history.push json['history'][day]
+        end
+
+        json['history'] = history
+      end
+
     rescue Errno::ENOENT
       raise Ki::ApiError.new("No history for #{params['coin']} in year #{params['year']}")
     end
 
+    json['dateFormat'] = 'dd-MM-yyyy'
     @result = json
   end
 end
