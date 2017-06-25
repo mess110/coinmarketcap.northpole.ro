@@ -74,8 +74,12 @@ class Api < Ticker
 end
 
 class History < Ki::Model
-  def allowed_versions
+  def self.allowed_versions
     %w(v6 v7)
+  end
+
+  def allowed_versions
+    History::allowed_versions
   end
 
   def coin_symbols_dir
@@ -125,12 +129,20 @@ end
 class Coins < Ki::Model
   def after_all
     validate_version
-    @result = coin_symbols.map { |coin_symbol|
+
+    coins = coin_symbols.map { |coin_symbol|
       {
         symbol: coin_symbol,
         ticker: "/ticker.json?select=#{coin_symbol}&version=#{params['version']}",
-        history: "/history.json?coin=#{coin_symbol}&year=2017"
+        history: "/history.json?coin=#{coin_symbol}&year=2017",
+        last14Days: "/history.json?coin=#{coin_symbol}&period=14days"
       }
+    }
+
+    @result = {
+      coins: coins,
+      tickerVersions: allowed_versions,
+      historyVersions: History::allowed_versions
     }
   end
 end
