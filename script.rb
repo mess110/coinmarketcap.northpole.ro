@@ -231,6 +231,23 @@ def write_all coin
   write("#{@path}/v6/all.json", all_clone)
 end
 
+def get_global_data markets
+  btc = markets.select { |e| e['symbol'] == 'BTC' }.first
+  btc_price = btc['price']['usd'].to_f
+
+  total_market_cap = markets.collect{ |e| e["marketCap"]["usd"].to_f }.inject(:+)
+  total_24h_volume = markets.collect{|e| e["volume24"]["btc"].to_f }.inject(:+) * btc_price
+  bitcoin_percent_of_mktcap = (btc['marketCap']['usd'].to_f * 100 / total_market_cap).round(2)
+
+  return {
+    total_market_cap: total_market_cap,
+    total_24h_volume: total_24h_volume,
+    bitcoin_percent_of_market_cap: bitcoin_percent_of_mktcap,
+    active_currencies: markets.select { |e| e['category'] == 'currency' }.count,
+    active_assets: markets.select { |e| e['category'] == 'asset' }.count
+  }
+end
+
 def get_json_data table_id
   markets = []
 
@@ -332,7 +349,7 @@ def get_json_data table_id
     markets << Hash[@keys.zip(coin)]
   end
 
-  { 'timestamp' => @ts, 'markets' => markets, 'currencyExchangeRates' => currency_exchange_rates }
+  { 'timestamp' => @ts, 'markets' => markets, 'currencyExchangeRates' => currency_exchange_rates, 'global' => get_global_data(markets) }
 end
 
 def mkdir *strings
