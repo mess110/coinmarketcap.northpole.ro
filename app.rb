@@ -13,15 +13,19 @@ end
 class Ki::Model
   forbid :create, :update, :delete
 
+  def self.annotations
+    {}
+  end
+
   def allowed_versions
-    %w(v5 v6)
+    %w(v5 v6 v8)
   end
 
   def validate_version
     if params['version'].present?
       params['version'] = "v#{params['version']}" unless params['version'].start_with?('v')
     else
-      params['version'] = 'v6'
+      params['version'] = 'v8'
     end
 
     unless allowed_versions.include?(params['version'])
@@ -39,16 +43,35 @@ class Ki::Model
 end
 
 class Ticker < Ki::Model
+  def self.annotations
+    {
+      params: ['version']
+    }
+  end
+
   def after_all
     validate_version
+    t_version = params['version'] == 'v8' ? 'v6' : params['version']
 
-    json = JSON.parse(File.read(File.join('public', 'api', params['version'], 'all.json')))
+    json = JSON.parse(File.read(File.join('public', 'api', t_version, 'all.json')))
     json['markets'] = json['markets'].reverse
 
     if params['select'].present?
       coins = params['select'].is_a?(Array) ? params['select'] : params['select'].split(',')
       coins.uniq!
       json['markets'] = json['markets'].select { |coin| coins.include? coin['symbol'] }
+    end
+
+    if params['symbol'].present?
+      coins = params['symbol'].is_a?(Array) ? params['symbol'] : params['symbol'].split(',')
+      coins.uniq!
+      json['markets'] = json['markets'].select { |coin| coins.include? coin['symbol'] }
+    end
+
+    if params['identifier'].present?
+      coins = params['identifier'].is_a?(Array) ? params['identifier'] : params['identifier'].split(',')
+      coins.uniq!
+      json['markets'] = json['markets'].select { |coin| coins.include? coin['identifier'] }
     end
 
     if params['page'].present?
@@ -71,11 +94,14 @@ class Ticker < Ki::Model
 end
 
 class Api < Ticker
+  def self.annotations
+    nil
+  end
 end
 
 class History < Ki::Model
   def self.allowed_versions
-    %w(v6 v7)
+    %w(v6 v7 v8)
   end
 
   def allowed_versions
@@ -83,7 +109,11 @@ class History < Ki::Model
   end
 
   def coin_symbols_dir
-    "public/api/v6/*.json"
+    if params['version'] == 'v7'
+      'public/api/v6/*.json'
+    else
+      "public/api/#{params['version']}/*.json"
+    end
   end
 
   def after_all
@@ -105,9 +135,10 @@ class History < Ki::Model
     end
 
     begin
-      json = JSON.parse(File.read(File.join('public', 'api', 'v6', 'history', "#{params['coin']}_#{params['year']}.json")))
+      t_version = params['version'] == 'v7' ? 'v6' : params['version']
+      json = JSON.parse(File.read(File.join('public', 'api', t_version, 'history', "#{params['coin']}_#{params['year']}.json")))
 
-      if params['version'] == 'v7'
+      if ['v7', 'v8'].include?(params['version'])
         history = []
 
         json['history'].keys.each do |day|
@@ -130,14 +161,20 @@ class Coins < Ki::Model
   def after_all
     validate_version
 
-    coins = coin_symbols.map { |coin_symbol|
-      {
-        symbol: coin_symbol,
+    coins = coin_symbols.map do |coin_symbol|
+      coin_info = {
         ticker: "/ticker.json?select=#{coin_symbol}&version=#{params['version']}",
         history: "/history.json?coin=#{coin_symbol}&year=2017",
         last14Days: "/history.json?coin=#{coin_symbol}&period=14days"
       }
-    }
+      if params['version'] == 'v8'
+        coin_info[:identifier] = coin_symbol
+      else
+        coin_info[:symbol] = coin_symbol
+      end
+
+      coin_info
+    end
 
     @result = {
       coins: coins,

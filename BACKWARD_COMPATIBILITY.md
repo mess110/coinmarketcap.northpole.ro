@@ -22,6 +22,14 @@ replace '?' with nil
 
 <br />
 
+[/ticker.json?select=BTC,DOGE](http://coinmarketcap.northpole.ro/ticker.json?select=BTC,DOGE)
+[/coins.json](http://coinmarketcap.northpole.ro/coins.json)
+
+[/ticker.json?page=1&size=10](http://coinmarketcap.northpole.ro/ticker.json?page=1&size=10)
+[/ticker.json?version=v6](http://coinmarketcap.northpole.ro/ticker.json?version=v6)
+
+[/history.json?coin=BTC&year=2017](http://coinmarketcap.northpole.ro/history.json?coin=BTC&year=2017)
+
 [/api/v6/all.json](http://coinmarketcap.northpole.ro/api/v6/all.json)
 [/api/v6/DOGE.json](http://coinmarketcap.northpole.ro/api/v6/DOGE.json)
 [/api/v6/BTC.json](http://coinmarketcap.northpole.ro/api/v6/BTC.json)

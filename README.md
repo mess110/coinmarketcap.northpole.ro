@@ -5,24 +5,24 @@ need coinmarketcap data as json?
 
 A straightforward JSON API for all the currencies and assets found on [coinmarketcap.com](http://coinmarketcap.com/ "coinmarketcap.com") crawled every 5 minutes
 
-CORS enabled. We also do [daily snapshots](http://coinmarketcap.northpole.ro/history.json?coin=BTC) of the data so you can view it evolving over time.
+CORS enabled. We also do [daily snapshots](http://coinmarketcap.northpole.ro/history.json?coin=bitcoin) of the data so you can view it evolving over time.
 
 [backward compatible](http://coinmarketcap.northpole.ro/doc.html "backward compatible")
 
 <br />
 
-version 6
+version 8
 ---------
 
 usage: send a get request to one of the urls below
 
-[/ticker.json?select=BTC,DOGE](http://coinmarketcap.northpole.ro/ticker.json?select=BTC,DOGE)
+[/ticker.json?identifier=bitcoin,dogecoin](http://coinmarketcap.northpole.ro/ticker.json?identifier=bitcoin,dogecoin)
 [/coins.json](http://coinmarketcap.northpole.ro/coins.json)
 
 [/ticker.json?page=1&size=10](http://coinmarketcap.northpole.ro/ticker.json?page=1&size=10)
-[/ticker.json?version=v6](http://coinmarketcap.northpole.ro/ticker.json?version=v6)
+[/ticker.json?version=v8](http://coinmarketcap.northpole.ro/ticker.json?version=v8)
 
-[/history.json?coin=BTC&year=2017](http://coinmarketcap.northpole.ro/history.json?coin=BTC&year=2017)
+[/history.json?coin=bitcoin&year=2017](http://coinmarketcap.northpole.ro/history.json?coin=bitcoin&year=2017)
 
 <br />
 

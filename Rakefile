@@ -5,6 +5,10 @@ require 'date'
 
 RSpec::Core::RakeTask.new(:spec)
 
+def production?
+  `hostname`.chomp == 'northpole'
+end
+
 def read path
   File.read(path)
 end
@@ -19,6 +23,10 @@ namespace :generate do
 
     def render_html input, output
       html = @markdown.render(read(input))
+
+      unless production?
+        html.gsub!('http://coinmarketcap.northpole.ro', '')
+      end
 
       generate(output, read('views/top.html'), 'w')
       generate(output, html, 'a')
@@ -36,7 +44,7 @@ namespace :generate do
   task :report do
     puts 'genearting report. this will take some time'
     puts 'getting logs'
-    if `hostname`.chomp == 'northpole'
+    if production?
       puts 'production environment detected'
       `scp -p /var/log/apache2/other_*.gz tmp/logs/`
     else

@@ -10,7 +10,7 @@ require 'bigdecimal'
 current_folder = File.dirname(File.expand_path(__FILE__))
 BASE_PATH = File.join(current_folder, 'public', 'api')
 # order is important because we zip this
-COIN_KEYS = ['position', 'name', 'symbol', 'category', 'marketCap', 'price', 'availableSupply', 'availableSupplyNumber', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
+COIN_KEYS = ['position', 'name', 'symbol', 'identifier', 'category', 'marketCap', 'price', 'availableSupply', 'availableSupplyNumber', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
 CURRENCIES = ['usd', 'btc']
 EXCHANGE_CURRENCIES = %w(usd aud brl cad chf cny eur gbp hkd idr inr jpy krw mxn rub)
 
@@ -122,6 +122,11 @@ def to_v6_format coin
   coin_clone
 end
 
+def v6_to_v8_format coin, mapping
+  coin['identifier'] = mapping['identifier']
+  coin
+end
+
 def write_one coin
   # version 1
   write("#{BASE_PATH}/#{coin['symbol'].downcase}.json", to_v1_format(coin))
@@ -141,15 +146,22 @@ def write_one coin
   coin_path = "#{BASE_PATH}/v6/#{coin['symbol']}.json"
   v6_coin = to_v6_format(coin)
   write(coin_path, v6_coin)
-  write_history(v6_coin)
-  write_hourly(v6_coin)
+  write_history(v6_coin, v6_coin['symbol'], 'v6')
+  write_hourly(v6_coin, v6_coin['symbol'], 'v6')
+
+  # version 8
+  return if coin['identifier'].nil?
+  coin_path = "#{BASE_PATH}/v8/#{coin['identifier']}.json"
+  write(coin_path, coin)
+  write_history(v6_coin, v6_coin['identifier'], 'v8')
+  write_hourly(v6_coin, v6_coin['identifier'], 'v8')
 end
 
-def write_hourly coin
+def write_hourly coin, path_key, vkey
   time_at = Time.at(@ts)
-  path = "#{BASE_PATH}/v6/history/#{coin['symbol']}_14days.json"
+  path = "#{BASE_PATH}/#{vkey}/history/#{path_key}_14days.json"
 
-  write(path, { 'symbol' => coin['symbol'], 'history' => {} }) unless File.exists?(path)
+  write(path, { 'symbol' => coin['symbol'], 'identifier' => coin['identifier'], 'history' => {} }) unless File.exists?(path)
 
   hash = JSON.parse(File.read(path))
   key = time_at.strftime('%H-%d-%m-%Y')
@@ -163,11 +175,11 @@ def write_hourly coin
   write(path, to_cleanup_hash)
 end
 
-def write_history coin
+def write_history coin, path_key, vkey
   time_at = Time.at(@ts)
-  path = "#{BASE_PATH}/v6/history/#{coin['symbol']}_#{time_at.year}.json"
+  path = "#{BASE_PATH}/#{vkey}/history/#{path_key}_#{time_at.year}.json"
 
-  write(path, { 'symbol' => coin['symbol'], 'history' => {} }) unless File.exists?(path)
+  write(path, { 'symbol' => coin['symbol'], 'identifier' => coin['identifier'], 'history' => {} }) unless File.exists?(path)
 
   hash = JSON.parse(File.read(path))
   key = time_at.strftime('%d-%m-%Y')
@@ -260,6 +272,9 @@ def get_json_data table_id
   # reverse is needed because
   # https://www.reddit.com/r/coinmarketcapjson/comments/2pqvwi/amazing_service_thank_you_very_much/cmz6sxr
   @doc.css("#{table_id} tbody tr").reverse.each do |tr|
+
+    tr_identifier = (tr.attr('id') || '')[3..-1] # can be nil
+
     tds = tr.css('td')
 
     td_position = tds[0].text.strip
@@ -330,6 +345,7 @@ def get_json_data table_id
       td_position,
       td_name,
       td_symbol,
+      tr_identifier,
       td_category,
       td_market_cap,
       td_price,
@@ -361,6 +377,8 @@ def mkdirs
   mkdir(BASE_PATH, 'v5/history')
   mkdir(BASE_PATH, 'v6')
   mkdir(BASE_PATH, 'v6/history')
+  mkdir(BASE_PATH, 'v8')
+  mkdir(BASE_PATH, 'v8/history')
 end
 
 def run_script
@@ -385,6 +403,31 @@ def convert_history_v5_v6
       hash['history'][day] = to_v6_format(target)
     end
     new_path = path.gsub('/api/v5/history', '/api/v6/history')
+    write(new_path, hash)
+  end
+end
+
+def convert_history_v6_v8
+  mkdirs
+
+  json_data = get_json_data('#currencies-all')
+
+  Dir["#{BASE_PATH}/v6/history/*.json"].each do |path|
+    hash = JSON.parse(File.read(path))
+    next if hash['history'].nil?
+    next if hash['history'].empty?
+
+    coin_symbol_pth = path.split('/').last.split('_')
+    old_pth = coin_symbol_pth.pop
+    coin_symbol = coin_symbol_pth.join('_')
+    mapping = json_data['markets'].select { |e| e['symbol'] == coin_symbol }.last
+
+    hash['history'].keys.each do |day|
+      target = hash['history'][day]
+      next if hash['history'][day]['position'].is_a? Numeric
+      hash['history'][day] = v6_to_v8_format(target, mapping)
+    end
+    new_path = "#{BASE_PATH}/v8/history/" + [mapping['identifier'], old_pth].join('_')
     write(new_path, hash)
   end
 end
@@ -421,6 +464,7 @@ List of commands:
 
   * run - queries coinmarketcap.com, parses the data and writes it to disk
   * convert_history_v5_v6 - converts history from v5 to v6
+  * convert_history_v6_v8 - converts history from v6 to v8
   * update_to_volume_v6
   * help - this text
 
@@ -443,6 +487,8 @@ else
     convert_history_v5_v6
   when 'update_to_volume_v6'
     update_to_volume_v6
+  when 'convert_history_v6_v8'
+    convert_history_v6_v8
   else
     help
   end
