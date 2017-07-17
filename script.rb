@@ -427,6 +427,7 @@ def convert_history_v6_v8
       next if hash['history'][day]['position'].is_a? Numeric
       hash['history'][day] = v6_to_v8_format(target, mapping)
     end
+    next if mapping.nil?
     new_path = "#{BASE_PATH}/v8/history/" + [mapping['identifier'], old_pth].join('_')
     write(new_path, hash)
   end
