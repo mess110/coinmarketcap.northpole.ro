@@ -8,20 +8,16 @@ require 'fileutils'
 require 'bigdecimal'
 
 current_folder = File.dirname(File.expand_path(__FILE__))
-@path = File.join(current_folder, 'public', 'api')
+BASE_PATH = File.join(current_folder, 'public', 'api')
+# order is important because we zip this
+COIN_KEYS = ['position', 'name', 'symbol', 'category', 'marketCap', 'price', 'availableSupply', 'availableSupplyNumber', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
+CURRENCIES = ['usd', 'btc']
+EXCHANGE_CURRENCIES = %w(usd aud brl cad chf cny eur gbp hkd idr inr jpy krw mxn rub)
 
 cmc_data = open("http://coinmarketcap.com/all/views/all/")
 @doc = Nokogiri::HTML(cmc_data)
 
-# File.write('static.html', cmc_data.read)
-# @doc = Nokogiri::HTML(File.read('static.html'))
-
 @ts = Time.now.to_i
-@currencies = ['usd', 'btc']
-@exchange_currencies = %w(usd aud brl cad chf cny eur gbp hkd idr inr jpy krw mxn rub)
-
-# order is important and KEEP ID AS THE LAST ELEMENT. you have been warned
-@keys = ['position', 'name', 'symbol', 'category', 'marketCap', 'price', 'availableSupply', 'availableSupplyNumber', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
 
 # converts a coin to the old json format
 def old_format coin, currency
@@ -31,6 +27,10 @@ def old_format coin, currency
   end
 
   coin
+end
+
+def convert number, currency, currency_exchange_rates
+  (BigDecimal(number['usd'].to_s) / BigDecimal(currency_exchange_rates[currency].to_s)).to_f.to_s rescue '?'
 end
 
 def write path, hash
@@ -124,21 +124,21 @@ end
 
 def write_one coin
   # version 1
-  write("#{@path}/#{coin['symbol'].downcase}.json", to_v1_format(coin))
+  write("#{BASE_PATH}/#{coin['symbol'].downcase}.json", to_v1_format(coin))
 
   # version 2
-  @currencies.each do |currency|
-    write("#{@path}/#{currency}/#{coin['symbol'].downcase}.json", to_v2_format(coin, currency))
+  CURRENCIES.each do |currency|
+    write("#{BASE_PATH}/#{currency}/#{coin['symbol'].downcase}.json", to_v2_format(coin, currency))
   end
 
-  write("#{@path}/v4/#{coin['symbol'].downcase}.json", to_v4_format(coin))
+  write("#{BASE_PATH}/v4/#{coin['symbol'].downcase}.json", to_v4_format(coin))
 
   # version 5
-  coin_path = "#{@path}/v5/#{coin['symbol']}.json"
+  coin_path = "#{BASE_PATH}/v5/#{coin['symbol']}.json"
   write(coin_path, coin)
 
   # version 6
-  coin_path = "#{@path}/v6/#{coin['symbol']}.json"
+  coin_path = "#{BASE_PATH}/v6/#{coin['symbol']}.json"
   v6_coin = to_v6_format(coin)
   write(coin_path, v6_coin)
   write_history(v6_coin)
@@ -147,7 +147,7 @@ end
 
 def write_hourly coin
   time_at = Time.at(@ts)
-  path = "#{@path}/v6/history/#{coin['symbol']}_14days.json"
+  path = "#{BASE_PATH}/v6/history/#{coin['symbol']}_14days.json"
 
   write(path, { 'symbol' => coin['symbol'], 'history' => {} }) unless File.exists?(path)
 
@@ -165,7 +165,7 @@ end
 
 def write_history coin
   time_at = Time.at(@ts)
-  path = "#{@path}/v6/history/#{coin['symbol']}_#{time_at.year}.json"
+  path = "#{BASE_PATH}/v6/history/#{coin['symbol']}_#{time_at.year}.json"
 
   write(path, { 'symbol' => coin['symbol'], 'history' => {} }) unless File.exists?(path)
 
@@ -198,18 +198,18 @@ def write_all coin
   coin['markets'].each do |c|
     h['markets'] << to_v1_format(c)
   end
-  write("#{@path}/all.json", h)
+  write("#{BASE_PATH}/all.json", h)
 
   # version 2
   h = {
     "timestamp"=> coin['timestamp'],
     "markets"=> []
   }
-  @currencies.each do |currency|
+  CURRENCIES.each do |currency|
     coin['markets'].each do |c|
       h['markets'] << to_v2_format(c, currency)
     end
-    write("#{@path}/#{currency}/all.json", h)
+    write("#{BASE_PATH}/#{currency}/all.json", h)
   end
 
   # version 4
@@ -220,15 +220,15 @@ def write_all coin
   coin['markets'].each do |c|
     h['markets'] << to_v4_format(c)
   end
-  write("#{@path}/v4/all.json", h)
+  write("#{BASE_PATH}/v4/all.json", h)
 
   # version 5
-  write("#{@path}/v5/all.json", coin)
+  write("#{BASE_PATH}/v5/all.json", coin)
 
   # version 6
   all_clone = coin.clone
   all_clone['markets'] = all_clone['markets'].map { |e| to_v6_format(e) }
-  write("#{@path}/v6/all.json", all_clone)
+  write("#{BASE_PATH}/v6/all.json", all_clone)
 end
 
 def get_global_data markets
@@ -253,7 +253,7 @@ def get_json_data table_id
 
   cer = @doc.css("#currency-exchange-rates")
   currency_exchange_rates = {}
-  @exchange_currencies.each do |currency|
+  EXCHANGE_CURRENCIES.each do |currency|
     currency_exchange_rates[currency] = cer.attribute("data-#{currency}").text.strip
   end
 
@@ -284,7 +284,7 @@ def get_json_data table_id
     td_change_24h = {}
     td_change_7d = {}
 
-    @currencies.each do |currency|
+    CURRENCIES.each do |currency|
       begin
         td_market_cap[currency] = tds[3].attribute("data-#{currency}").text.strip
       rescue
@@ -317,11 +317,7 @@ def get_json_data table_id
       end
     end
 
-    def convert number, currency, currency_exchange_rates
-      (BigDecimal(number['usd'].to_s) / BigDecimal(currency_exchange_rates[currency].to_s)).to_f.to_s rescue '?'
-    end
-
-    @exchange_currencies.each do |currency|
+    EXCHANGE_CURRENCIES.each do |currency|
       td_market_cap[currency] = convert(td_market_cap, currency, currency_exchange_rates)
       td_price[currency] = convert(td_price, currency, currency_exchange_rates)
       td_volume_24h[currency] = '0.0 %'
@@ -346,7 +342,7 @@ def get_json_data table_id
       @ts,
     ]
 
-    markets << Hash[@keys.zip(coin)]
+    markets << Hash[COIN_KEYS.zip(coin)]
   end
 
   { 'timestamp' => @ts, 'markets' => markets, 'currencyExchangeRates' => currency_exchange_rates, 'global' => get_global_data(markets) }
@@ -357,14 +353,14 @@ def mkdir *strings
 end
 
 def mkdirs
-  mkdir(@path, 'btc')
-  mkdir(@path, 'usd')
-  mkdir(@path, 'v3')
-  mkdir(@path, 'v4')
-  mkdir(@path, 'v5')
-  mkdir(@path, 'v5/history')
-  mkdir(@path, 'v6')
-  mkdir(@path, 'v6/history')
+  mkdir(BASE_PATH, 'btc')
+  mkdir(BASE_PATH, 'usd')
+  mkdir(BASE_PATH, 'v3')
+  mkdir(BASE_PATH, 'v4')
+  mkdir(BASE_PATH, 'v5')
+  mkdir(BASE_PATH, 'v5/history')
+  mkdir(BASE_PATH, 'v6')
+  mkdir(BASE_PATH, 'v6/history')
 end
 
 def run_script
@@ -379,7 +375,7 @@ end
 
 def convert_history_v5_v6
   mkdirs
-  Dir["#{@path}/v5/history/*.json"].each do |path|
+  Dir["#{BASE_PATH}/v5/history/*.json"].each do |path|
     hash = JSON.parse(File.read(path))
     next if hash['history'].nil?
     next if hash['history'].empty?
@@ -395,7 +391,7 @@ end
 
 def update_to_volume_v6
   mkdirs
-  Dir["#{@path}/v6/history/*.json"].each do |path|
+  Dir["#{BASE_PATH}/v6/history/*.json"].each do |path|
     hash = JSON.parse(File.read(path))
     next if hash['history'].nil?
     next if hash['history'].empty?

@@ -5,7 +5,11 @@ gem 'capistrano'
 gem 'rvm-capistrano'
 gem 'highline'
 gem 'redcarpet'
-gem 'rspec'
-gem 'fakeweb'
 gem 'rack', '1.6.1'
 gem 'ki', '0.4.8'
+
+group :development do
+  gem 'pry'
+  gem 'rspec'
+  gem 'fakeweb'
+end

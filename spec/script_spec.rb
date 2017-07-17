@@ -2,16 +2,25 @@ require 'spec_helper'
 
 describe 'script' do
   before :all do
+    require './script.rb'
+    @doc = Nokogiri::HTML(open("http://coinmarketcap.com/all/views/all/"))
     @ts = Time.now.to_i
-    @currencies = ['usd', 'btc', 'eur', 'cny', 'gbp', 'cad', 'rub']
-    @keys = ['position', 'name', 'marketCap', 'price', 'totalSupply', 'volume24', 'change24', 'timestamp', 'lowVolume', 'id']
-    @doc = Nokogiri::HTML(open("http://coinmarketcap.com/all.html"))
+    @json = get_json_data('#currencies-all')
+  end
 
-    @json = get_json_data('#currencies')
+  it 'has a timestamp' do
+    expect(@json['timestamp']).to eq @ts
+  end
+
+  it 'returns the markets' do
+    expect(@json['markets'].class).to be Array
+  end
+
+  it 'contains global data' do
+    expect(@json['global']).to_not be_nil
   end
 
   it 'knows the world is not broken and people are not crying' do
-    s = @json['markets'][0]['id']
-    expect(s).to eq('btc')
+    expect(@json['markets'].last['symbol']).to eq 'BTC'
   end
 end
