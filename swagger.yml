@@ -1,0 +1,134 @@
+swagger: '2.0'
+host: coinmarketcap.northpole.ro
+info:
+  description: |
+    A straightforward JSON API for all the currencies and assets found on [coinmarketcap.com](https://coinmarketcap.com) crawled every 5 minutes.
+
+    CORS enabled
+
+    [Github](https://github.com/mess110/coinmarketcap.northpole.ro)
+
+    [Twitter](https://twitter.com/mess110)
+  version: 'v8'
+  title: CoinMarketCap Json Api
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+schemes: ['http']
+paths:
+  /coins.json:
+    get:
+      tags:
+      - API
+      summary: Return a list of supported coins
+      produces:
+      - application/json
+      responses:
+        200:
+          description: Return a list of coins
+          #schema:
+          #  type: array
+            #items:
+            #  $ref: '#/definitions/Coins'
+  /ticker.json:
+    get:
+      tags:
+      - API
+      summary: Return coin ticker
+      description: |
+        Returns the timestamp, info about the coins, currency exchange rates and global data.
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: symbol
+        type: string
+        description: Market or array of markets `BTC,DOGE`
+      - in: query
+        name: identifier
+        type: string
+        description: Market or array of markets `bitcoin,dogecoin`
+      - in: query
+        name: page
+        type: number
+        description: Page number
+        default: 0
+      - in: query
+        name: size
+        type: number
+        description: Number of items per page
+        default: 20
+      responses:
+        200:
+          description: Returns the coin ticker
+  /history.json:
+    get:
+      tags:
+      - API
+      summary: Return daily historical coin data
+      description: |
+        Returns daily historical coin data.
+        
+        History is written at the first `5 minutes` of each day. Server timezone is `UTC+01:00`.
+      
+        If the `period` param is set to `14days` it returns hourly data from the last 14 days.
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: coin
+        type: string
+        description: Coin - bitcoin
+        default: ''
+        required: true
+      - in: query
+        name: period
+        type: string
+        description: Defaults to current year. `14days` is also an option
+        default: 2017
+      - in: query
+        name: format
+        type: string
+        description: Can be `array` or `hash`
+        default: array
+      responses:
+        200:
+          description: Returns the history
+        400:
+          description: |
+            Format not supported
+
+            Invalid coin
+
+            Invalid year
+
+            No history in year
+# definitions:
+#  Coins:
+#    type: object
+#    properties:
+#      coins:
+#        type: array
+#        items:
+#          $ref: '#/definitions/MetaCoin'
+#      tickerVersions:
+#        type: string
+#        example: v8
+#      historyVersions:
+#        type: string
+#        example: v8
+#  MetaCoin:
+#    type: object
+#    properties:
+#      ticker:
+#        type: string
+#        example: '/ticker.json?select=bitcoin&version=v8'
+#      history:
+#        type: string
+#        example: '/history.json?coin=bitcoin&year=2017'
+#      last14Days:
+#        type: string
+#        example: '/history.json?coin=bitcoin&period=14days'
+#      identifier:
+#        type: string
+#        example: bitcoin
