@@ -108,6 +108,10 @@ class History < Ki::Model
     History::allowed_versions
   end
 
+  def valid_formats
+    %w(array hash)
+  end
+
   def coin_symbols_dir
     if params['version'] == 'v7'
       'public/api/v6/*.json'
@@ -116,13 +120,17 @@ class History < Ki::Model
     end
   end
 
-  def after_all
-    validate_version
-
-    unless coin_symbols.include?(params['coin'])
-      raise Ki::ApiError.new("Invalid coin '#{params['coin']}'. See '/coins.json' for valid coins")
+  def validate_format
+    if params['format'].present?
+      unless valid_formats.include?(params['format'])
+        raise Ki::ApiError.new("Invalid format. Valid formats are #{valid_formats.join(', ')}")
+      end
+    else
+      params['format'] = 'array'
     end
+  end
 
+  def validate_year
     params['year'] = params['period']
     if params['year'].blank?
       params['year'] = Time.new.year
@@ -133,20 +141,35 @@ class History < Ki::Model
         end
       end
     end
+  end
+
+  def validate_symbols
+    unless coin_symbols.include?(params['coin'])
+      raise Ki::ApiError.new("Invalid coin '#{params['coin']}'. See '/coins.json' for valid coins")
+    end
+  end
+
+  def after_all
+    validate_version
+    validate_format
+    validate_symbols
+    validate_year
 
     begin
       t_version = params['version'] == 'v7' ? 'v6' : params['version']
       json = JSON.parse(File.read(File.join('public', 'api', t_version, 'history', "#{params['coin']}_#{params['year']}.json")))
 
       if ['v7', 'v8'].include?(params['version'])
-        history = []
+        if params['format'] == 'array'
+          history = []
 
-        json['history'].keys.each do |day|
-          json['history'][day]['date'] = day
-          history.push json['history'][day]
+          json['history'].keys.each do |day|
+            json['history'][day]['date'] = day
+            history.push json['history'][day]
+          end
+
+          json['history'] = history
         end
-
-        json['history'] = history
       end
 
     rescue Errno::ENOENT
