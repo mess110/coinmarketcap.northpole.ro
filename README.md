@@ -14,7 +14,7 @@ CORS enabled. We also do [daily snapshots](http://coinmarketcap.northpole.ro/his
 version 8
 ---------
 
-[swagger documentation](https://app.swaggerhub.com/apis/mess110/CoinMarketCap-Json-Api/8)
+[swagger documentation](https://app.swaggerhub.com/apis/mess110/CoinMarketCap-Json-Api/v8)
 
 [get bitcoin and dogecoin ticker](http://coinmarketcap.northpole.ro/ticker.json?identifier=bitcoin,dogecoin)
 
