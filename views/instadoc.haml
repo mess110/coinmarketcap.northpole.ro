@@ -1,0 +1,18 @@
+%h1 CoinMarketCap Json Api
+
+%ul
+  - Ki::Model.descendants.each do |model|
+    - unless model.annotations.nil?
+      %li
+        %div
+          %h2= model.to_s
+          %sub
+            Endpoint:
+            = "/#{model.to_s.downcase}.json"
+        -# TODO: if any attributes
+        -# %p{style: 'color: gray'}
+          -# = model.annotations
+
+  -# %h3 Sample response
+  -# %pre
+    -# = Ki::ApiError.new('Bad request').result.to_json
