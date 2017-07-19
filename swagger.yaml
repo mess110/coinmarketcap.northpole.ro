@@ -1,0 +1,98 @@
+---
+swagger: "2.0"
+info:
+  description: "A straightforward JSON API for all the currencies and assets found\
+    \ on [coinmarketcap.com](https://coinmarketcap.com) crawled every 5 minutes.\n\
+    \nCORS enabled\n\n[Github](https://github.com/mess110/coinmarketcap.northpole.ro)\n\
+    \n[Twitter](https://twitter.com/mess110)\n"
+  version: "v8"
+  title: "CoinMarketCap Json Api"
+  license:
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
+host: "coinmarketcap.northpole.ro"
+schemes:
+- "http"
+paths:
+  /coins.json:
+    get:
+      tags:
+      - "API"
+      summary: "Return a list of supported coins"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "Return a list of coins"
+  /ticker.json:
+    get:
+      tags:
+      - "API"
+      summary: "Return coin ticker"
+      description: "Returns the timestamp, info about the coins, currency exchange\
+        \ rates and global data.\n"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "symbol"
+        in: "query"
+        description: "Market or array of markets `BTC,DOGE`"
+        required: false
+        type: "string"
+      - name: "identifier"
+        in: "query"
+        description: "Market or array of markets `bitcoin,dogecoin`"
+        required: false
+        type: "string"
+      - name: "page"
+        in: "query"
+        description: "Page number"
+        required: false
+        type: "number"
+        default: 0
+      - name: "size"
+        in: "query"
+        description: "Number of items per page"
+        required: false
+        type: "number"
+        default: 20
+      responses:
+        200:
+          description: "Returns the coin ticker"
+  /history.json:
+    get:
+      tags:
+      - "API"
+      summary: "Return daily historical coin data"
+      description: "Returns daily historical coin data.\n\nHistory is written at the\
+        \ first `5 minutes` of each day. Server timezone is `UTC+01:00`.\n\nIf the\
+        \ `period` param is set to `14days` it returns hourly data from the last 14\
+        \ days.\n"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "coin"
+        in: "query"
+        description: "Coin - bitcoin"
+        required: true
+        type: "string"
+      - name: "period"
+        in: "query"
+        description: "Defaults to current year. `14days` is also an option"
+        required: false
+        type: "string"
+        default: "2017"
+      - name: "format"
+        in: "query"
+        description: "Can be `array` or `hash`"
+        required: false
+        type: "string"
+        default: "array"
+      responses:
+        200:
+          description: "Returns the history"
+        400:
+          description: "Format not supported\n\nInvalid coin\n\nInvalid year\n\nNo\
+            \ history in year\n"
+definitions: {}
