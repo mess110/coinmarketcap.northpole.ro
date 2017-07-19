@@ -5,10 +5,6 @@ need coinmarketcap data as json?
 
 A straightforward JSON API for all the currencies and assets found on [coinmarketcap.com](http://coinmarketcap.com/ "coinmarketcap.com") crawled every 5 minutes
 
-CORS enabled. We also do [daily snapshots](http://coinmarketcap.northpole.ro/history.json?coin=bitcoin) of the data so you can view it evolving over time.
-
-[backward compatible](http://coinmarketcap.northpole.ro/doc.html "backward compatible")
-
 <br />
 
 version 8
@@ -16,9 +12,9 @@ version 8
 
 [swagger documentation](https://app.swaggerhub.com/apis/mess110/CoinMarketCap-Json-Api/v8)
 
-[get bitcoin and dogecoin ticker](http://coinmarketcap.northpole.ro/ticker.json?identifier=bitcoin,dogecoin)
+[bitcoin and dogecoin ticker](http://coinmarketcap.northpole.ro/ticker.json?identifier=bitcoin,dogecoin)
 
-[get bitcoin 2017 data](http://coinmarketcap.northpole.ro/history.json?coin=bitcoin&year=2017)
+[historical data bitcoin 2016](http://coinmarketcap.northpole.ro/history.json?coin=bitcoin&year=2016)
 
 <br />
 
