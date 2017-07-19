@@ -24,6 +24,8 @@ usage: send a get request to one of the urls below
 
 [/history.json?coin=bitcoin&year=2017](http://coinmarketcap.northpole.ro/history.json?coin=bitcoin&year=2017)
 
+[swagger doc (WIP)](https://app.swaggerhub.com/apis/mess110/CoinMarketCap-Json-Api/8)
+
 <br />
 
 <br />
