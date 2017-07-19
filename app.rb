@@ -59,7 +59,7 @@ class Ticker < Ki::Model
     if params['select'].present?
       coins = params['select'].is_a?(Array) ? params['select'] : params['select'].split(',')
       coins.uniq!
-      json['markets'] = json['markets'].select { |coin| coins.include? coin['symbol'] }
+      json['markets'] = json['markets'].select { |coin| coins.include? coin['select'] }
     end
 
     if params['symbol'].present?
