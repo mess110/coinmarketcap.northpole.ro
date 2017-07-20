@@ -24,7 +24,7 @@ community projects
 ------------------
 
 [python cli](https://github.com/abitfan/coinmarketcap-cli)
-[top 10 analysis](http://ekerstein.com/coin_2017_price/top_10/)
+[top 10 analysis](http://ekerstein.com/coin_2017_price/top10/)
 [XMR Android widget](https://play.google.com/store/apps/details?id=tr.monerostatus)
 
 want to add your project to the list?
