@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'script' do
   before :all do
     require './script.rb'
-    @doc = Nokogiri::HTML(open("http://coinmarketcap.com/all/views/all/"))
+    @doc = Nokogiri::HTML(open("https://coinmarketcap.com/all/views/all/"))
     @ts = Time.now.to_i
     @json = get_json_data('#currencies-all')
   end
