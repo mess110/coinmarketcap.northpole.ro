@@ -16,7 +16,7 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 require 'fakeweb'
 FakeWeb.allow_net_connect = false
-FakeWeb.register_uri(:get, 'http://coinmarketcap.com/all/views/all/', body: File.read('spec/assets/all.html'))
+FakeWeb.register_uri(:get, 'https://coinmarketcap.com/all/views/all/', body: File.read('spec/assets/all.html'))
 
 RSpec.configure do |config|
   config.before(:all) {}
