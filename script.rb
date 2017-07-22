@@ -14,7 +14,7 @@ COIN_KEYS = ['position', 'name', 'symbol', 'identifier', 'category', 'marketCap'
 CURRENCIES = ['usd', 'btc']
 EXCHANGE_CURRENCIES = %w(usd aud brl cad chf cny eur gbp hkd idr inr jpy krw mxn rub)
 
-cmc_data = open("http://coinmarketcap.com/all/views/all/")
+cmc_data = open("https://coinmarketcap.com/all/views/all/")
 @doc = Nokogiri::HTML(cmc_data)
 
 @ts = Time.now.to_i
