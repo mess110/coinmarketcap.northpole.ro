@@ -1,7 +1,7 @@
 Install
 =======
 
-# Install rvm
+# Setup
 
 rvm install 2.1.0
 
