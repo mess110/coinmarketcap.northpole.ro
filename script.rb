@@ -382,6 +382,7 @@ def mkdirs
 end
 
 def run_script
+  puts "Starting script at #{Time.at(@ts)}"
   mkdirs
   json_data = get_json_data('#currencies-all')
 
@@ -389,6 +390,9 @@ def run_script
     write_one h
   end
   write_all json_data
+
+  now = Time.now
+  puts "Script finished at #{now}. (#{(now - @ts).to_i} seconds)"
 end
 
 def convert_history_v5_v6
