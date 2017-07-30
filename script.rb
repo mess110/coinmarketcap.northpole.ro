@@ -35,6 +35,9 @@ end
 
 def write path, hash
   File.open(path,'w') { |f| f.write(hash.to_json) }
+rescue => e
+  puts "ERROR: could not write #{path}"
+  puts e
 end
 
 # converts all coins in hash['markets'] to old json format
