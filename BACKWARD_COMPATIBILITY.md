@@ -57,7 +57,7 @@ version 5
 
 <br />
 
-version 4
+version 4 - discontinued
 ---------
 
 [/api/v4/all.json](http://coinmarketcap.northpole.ro/api/v4/all.json)
@@ -91,7 +91,7 @@ version 3 - discontinued
 
 <br />
 
-version 2
+version 2 - discontinued
 ---------
 
 [/api/btc/all.json](http://coinmarketcap.northpole.ro/api/btc/all.json)
