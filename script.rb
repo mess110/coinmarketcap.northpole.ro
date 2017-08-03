@@ -176,6 +176,8 @@ def write_hourly coin, path_key, vkey
     to_cleanup_hash['history'].delete(to_cleanup_hash['history'].keys.first)
   end
   write(path, to_cleanup_hash)
+rescue => e
+  puts e.backtrace
 end
 
 def write_history coin, path_key, vkey
