@@ -28,7 +28,7 @@ def run_script
 
   current_folder = File.dirname(File.expand_path(__FILE__))
   base_path = File.join(current_folder, 'public/api/v8/history/')
-  output_path = 'saturn.json'
+  output_path = File.join(current_folder, 'saturn.json')
 
   years = (2016..Time.now.year).to_a
   target_days_ago = [1, 2, 3, 14, 30, 60, 90, 120, 150, 180, 365]
