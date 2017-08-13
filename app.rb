@@ -185,15 +185,21 @@ class Coins < Ki::Model
     validate_version
 
     coins = coin_symbols.map do |coin_symbol|
-      coin_info = {
-        ticker: "/ticker.json?select=#{coin_symbol}&version=#{params['version']}",
-        history: "/history.json?coin=#{coin_symbol}&year=2017",
-        last14Days: "/history.json?coin=#{coin_symbol}&period=14days"
-      }
+      coin_info = {}
       if params['version'] == 'v8'
-        coin_info[:identifier] = coin_symbol
+        coin_info = {
+          ticker: "/ticker.json?identifier=#{coin_symbol}&version=#{params['version']}",
+          history: "/history.json?coin=#{coin_symbol}&period=2017",
+          last14Days: "/history.json?coin=#{coin_symbol}&period=14days",
+          identifier: coin_symbol
+        }
       else
-        coin_info[:symbol] = coin_symbol
+        coin_info = {
+          ticker: "/ticker.json?select=#{coin_symbol}&version=#{params['version']}",
+          history: "/history.json?coin=#{coin_symbol}&year=2017",
+          last14Days: "/history.json?coin=#{coin_symbol}&period=14days",
+          symbol: coin_symbol
+        }
       end
 
       coin_info
