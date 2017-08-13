@@ -206,3 +206,11 @@ class Coins < Ki::Model
     }
   end
 end
+
+class Saturn < Ki::Model
+  def after_all
+    @result = JSON.parse(File.read('saturn.json'))
+  rescue
+    @result = {}
+  end
+end
