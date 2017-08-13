@@ -93,11 +93,12 @@ def to_v4_format coin
   }
 end
 
+def to_general_number n
+  return nil if n == '?' || n == nil
+  n.to_f
+end
+
 def to_v6_format coin
-  def to_general_number n
-    return nil if n == '?' || n == nil
-    n.to_f
-  end
 
   coin_clone = coin.clone
   # this will ensure the order
@@ -164,7 +165,7 @@ def write_hourly coin, path_key, vkey
   time_at = Time.at(@ts)
   path = "#{BASE_PATH}/#{vkey}/history/#{path_key}_14days.json"
 
-  write(path, { 'symbol' => coin['symbol'], 'identifier' => coin['identifier'], 'history' => {} }) unless File.exists?(path)
+  write(path, { 'symbol' => coin['symbol'], 'identifier' => coin['identifier'], 'history' => {} }) unless File.exist?(path)
 
   hash = JSON.parse(File.read(path))
   key = time_at.strftime('%H-%d-%m-%Y')
@@ -177,6 +178,8 @@ def write_hourly coin, path_key, vkey
   end
   write(path, to_cleanup_hash)
 rescue => e
+  puts "ERROR: #{coin}:"
+  puts path
   puts e.backtrace
 end
 
@@ -184,7 +187,7 @@ def write_history coin, path_key, vkey
   time_at = Time.at(@ts)
   path = "#{BASE_PATH}/#{vkey}/history/#{path_key}_#{time_at.year}.json"
 
-  write(path, { 'symbol' => coin['symbol'], 'identifier' => coin['identifier'], 'history' => {} }) unless File.exists?(path)
+  write(path, { 'symbol' => coin['symbol'], 'identifier' => coin['identifier'], 'history' => {} }) unless File.exist?(path)
 
   hash = JSON.parse(File.read(path))
   key = time_at.strftime('%d-%m-%Y')
