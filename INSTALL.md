@@ -19,4 +19,4 @@ cap production deploy # This will run the generate:doc rake task
 
 # Load the crontab
 
-crontab northpole-crontab
+crontab crons/northpole-crontab
