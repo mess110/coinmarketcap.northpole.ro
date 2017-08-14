@@ -286,7 +286,13 @@ def get_json_data table_id
     tds = tr.css('td')
 
     td_position = tds[0].text.strip
-    td_name = tds[1].text.strip
+
+    begin
+      td_name = tds[1].children[1]['alt'].strip
+    rescue
+      td_name = tds[1].text.strip
+    end
+
     td_symbol = tds[2].text.strip
     begin
       td_category = tds[1].css('a')[0]['href'].include?('assets') ? 'asset' : 'currency'
