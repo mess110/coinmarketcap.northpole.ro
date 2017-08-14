@@ -52,6 +52,9 @@ def run_script
     timestamp: timestamp,
     timestampFriendly: Time.at(timestamp),
     currency: 'USD',
+    total: coins.size,
+    active_currencies: 0,
+    active_assets: 0,
     coins: {}
   }
 
@@ -60,6 +63,13 @@ def run_script
 
     # TODO: what if no history
     meta = all_history['history'].values.last
+
+    case meta['category']
+    when 'currency'
+      output[:active_currencies] += 1
+    when 'asset'
+      output[:active_assets] += 1
+    end
 
     coin_hash = {
       name: meta['name'],
