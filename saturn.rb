@@ -4,8 +4,12 @@
 # to Saturn
 
 require 'json'
+require 'nokogiri'
+require 'net/http'
+require 'fileutils'
 
 DAY = 60 * 60 * 24
+CURRENT_FOLDER = File.dirname(File.expand_path(__FILE__))
 
 def read coin
   output = nil
@@ -22,13 +26,31 @@ def read coin
   output
 end
 
+def req url
+  url = URI.parse(url)
+  reqs = Net::HTTP::Get.new(url.to_s)
+  res = Net::HTTP.start(url.host, url.port) { |http|
+    http.request(reqs)
+  }
+  JSON.parse(res.body)
+end
+
+def write path, json
+  File.open(path, 'w') do |f|
+    f.write(json.to_json)
+  end
+end
+
+def mkdir *strings
+  FileUtils.mkdir_p File.join(strings)
+end
+
 def run_script
   timestamp = Time.now.to_i
   puts "Starting script at #{Time.at(timestamp)}"
 
-  current_folder = File.dirname(File.expand_path(__FILE__))
-  base_path = File.join(current_folder, 'public/api/v8/history/')
-  output_path = File.join(current_folder, 'saturn.json')
+  base_path = File.join(CURRENT_FOLDER, 'public/api/v8/history/')
+  output_path = File.join(CURRENT_FOLDER, 'saturn.json')
 
   years = (2016..Time.now.year).to_a
   target_days_ago = [1, 2, 3, 14, 30, 60, 90, 120, 150, 180, 365]
@@ -102,10 +124,27 @@ def run_script
 end
 
 def download_history
+  if ARGV.length != 2
+    fail 'missing backup path'
+  end
+
+  local_path = File.join(ARGV[1], 'public/api/v8/history/')
+
+  mkdir(CURRENT_FOLDER, local_path)
+  url = 'http://coinmarketcap.northpole.ro/'
+  url = 'http://localhost:1337/'
   timestamp = Time.now.to_i
   puts "Starting script at #{Time.at(timestamp)}"
 
-  puts 'TODO: not implemented'
+  coins = req("#{url}coins.json")
+  puts "Found #{coins['coins'].length} coins and #{coins['coins'].collect { |e| e['periods'] }.flatten.length} files."
+  coins['coins'].each do |coin|
+    coin['periods'].each do |period|
+      new_path = "#{local_path}#{coin['identifier']}_#{period}.json"
+      json = req("#{url}history.json?coin=#{coin['identifier']}&period=#{period}&format=hash")
+      write(new_path, json)
+    end
+  end
 
   now = Time.now
   puts "Script finished at #{now}. (#{(now - timestamp).to_i} seconds)"

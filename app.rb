@@ -160,7 +160,7 @@ class History < Ki::Model
       json = JSON.parse(File.read(File.join('public', 'api', t_version, 'history', "#{params['coin']}_#{params['year']}.json")))
 
       if ['v7', 'v8'].include?(params['version'])
-        if params['format'] == 'array'
+        if params['format'] == 'array' && params['year'] != '14days'
           history = []
 
           json['history'].keys.each do |day|
@@ -184,6 +184,8 @@ class Coins < Ki::Model
   def after_all
     validate_version
 
+    all_history = Dir["public/api/#{params['version']}/history/*.json"]
+
     coins = coin_symbols.map do |coin_symbol|
       coin_info = {}
       if params['version'] == 'v8'
@@ -191,7 +193,8 @@ class Coins < Ki::Model
           ticker: "/ticker.json?identifier=#{coin_symbol}&version=#{params['version']}",
           history: "/history.json?coin=#{coin_symbol}&period=2017",
           last14Days: "/history.json?coin=#{coin_symbol}&period=14days",
-          identifier: coin_symbol
+          identifier: coin_symbol,
+          periods: all_history.select { |e| e.include?("/history/#{coin_symbol}_") }.map { |e| e.split('_').last.split('.').first }
         }
       else
         coin_info = {
