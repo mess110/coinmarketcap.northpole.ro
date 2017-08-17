@@ -132,9 +132,10 @@ def download_history
 
   mkdir(CURRENT_FOLDER, local_path)
   url = 'http://coinmarketcap.northpole.ro/'
-  url = 'http://localhost:1337/'
+  # url = 'http://localhost:1337/'
   timestamp = Time.now.to_i
   puts "Starting script at #{Time.at(timestamp)}"
+  puts "Using #{local_path}"
 
   coins = req("#{url}coins.json")
   puts "Found #{coins['coins'].length} coins and #{coins['coins'].collect { |e| e['periods'] }.flatten.length} files."
