@@ -128,7 +128,7 @@ def download_history
     fail 'missing backup path'
   end
 
-  local_path = File.join(ARGV[1], 'public/api/v8/history/')
+  local_path = File.join(ARGV[1], 'api/v8/history/')
 
   mkdir(CURRENT_FOLDER, local_path)
   url = 'http://coinmarketcap.northpole.ro/'
