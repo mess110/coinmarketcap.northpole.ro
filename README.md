@@ -14,7 +14,7 @@ version 8
 
 [bitcoin and dogecoin ticker](http://coinmarketcap.northpole.ro/ticker.json?identifier=bitcoin,dogecoin)
 
-[historical data bitcoin 2016](http://coinmarketcap.northpole.ro/history.json?coin=bitcoin&year=2016)
+[historical data bitcoin 2016](http://coinmarketcap.northpole.ro/history.json?coin=bitcoin&period=2016)
 
 <br />
 
