@@ -71,24 +71,6 @@ def to_v1_format coin, currency='usd'
   }
 end
 
-def to_v4_format coin
-  {
-    position: coin['position'],
-    name: coin['name'],
-    marketCap: coin['marketCap'],
-    price: coin['price'],
-    totalSupply: coin['availableSupply'],
-    volume24: coin['volume24'],
-    change24: "0.0 %",
-    change1h: coin['change1h'],
-    change7h: coin['change7h'],
-    change7d: coin['change7d'],
-    timestamp: coin['timestamp'],
-    lowVolume: false,
-    id: coin['symbol'].downcase
-  }
-end
-
 def to_general_number n
   return nil if n == '?' || n == nil
   n.to_f
@@ -130,8 +112,6 @@ end
 def write_one coin
   # version 1
   write("#{BASE_PATH}/#{coin['symbol'].downcase}.json", to_v1_format(coin))
-
-  write("#{BASE_PATH}/v4/#{coin['symbol'].downcase}.json", to_v4_format(coin))
 
   # version 5
   coin_path = "#{BASE_PATH}/v5/#{coin['symbol']}.json"
@@ -210,16 +190,6 @@ def write_all coin
     h['markets'] << to_v1_format(c)
   end
   write("#{BASE_PATH}/all.json", h)
-
-  # version 4
-  h = {
-    "timestamp"=> coin['timestamp'],
-    "markets"=> []
-  }
-  coin['markets'].each do |c|
-    h['markets'] << to_v4_format(c)
-  end
-  write("#{BASE_PATH}/v4/all.json", h)
 
   # version 5
   write("#{BASE_PATH}/v5/all.json", coin)
@@ -364,7 +334,6 @@ end
 def mkdirs
   mkdir(BASE_PATH, 'btc')
   mkdir(BASE_PATH, 'usd')
-  mkdir(BASE_PATH, 'v4')
   mkdir(BASE_PATH, 'v5')
   mkdir(BASE_PATH, 'v5/history')
   mkdir(BASE_PATH, 'v6')
