@@ -164,6 +164,10 @@ def write_history coin, path_key, vkey
   key = time_at.strftime('%d-%m-%Y')
 
   whistory hash, key, coin, path
+rescue => e
+  puts "ERROR: write_history #{coin['symbol']}:"
+  puts path
+  puts e.backtrace
 end
 
 def whistory hash, key, coin, path
