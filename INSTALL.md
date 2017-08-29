@@ -1,6 +1,14 @@
 Install
 =======
 
+# Minimum hardware requirements
+
+2 vCPU
+
+1024GB RAM
+
+30GB disk space
+
 # Setup
 
 rvm install 2.1.0

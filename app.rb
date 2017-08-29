@@ -1,5 +1,16 @@
 require 'ki'
 
+# Overwrite so we don't use mongo at all
+module Ki
+  module Orm
+    class Db
+      def establish_connection
+        {}
+      end
+    end
+  end
+end
+
 class Object
   def blank?
     respond_to?(:empty?) ? !!empty? : !self
@@ -12,6 +23,10 @@ end
 
 class Ki::Model
   forbid :create, :update, :delete
+
+  def find
+    # overrwrite so we don't use mongo at all
+  end
 
   def self.annotations
     {}
