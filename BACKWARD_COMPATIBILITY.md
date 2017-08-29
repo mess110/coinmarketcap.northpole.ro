@@ -91,7 +91,7 @@ version 3 - discontinued
 
 <br />
 
-version 2
+version 2 - discontinued
 ---------
 
 [/api/btc/all.json](http://coinmarketcap.northpole.ro/api/btc/all.json)

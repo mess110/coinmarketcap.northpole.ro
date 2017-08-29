@@ -71,10 +71,6 @@ def to_v1_format coin, currency='usd'
   }
 end
 
-def to_v2_format coin, currency='usd'
-  to_v1_format(coin, currency)
-end
-
 def to_v4_format coin
   {
     position: coin['position'],
@@ -134,11 +130,6 @@ end
 def write_one coin
   # version 1
   write("#{BASE_PATH}/#{coin['symbol'].downcase}.json", to_v1_format(coin))
-
-  # version 2
-  CURRENCIES.each do |currency|
-    write("#{BASE_PATH}/#{currency}/#{coin['symbol'].downcase}.json", to_v2_format(coin, currency))
-  end
 
   write("#{BASE_PATH}/v4/#{coin['symbol'].downcase}.json", to_v4_format(coin))
 
@@ -219,18 +210,6 @@ def write_all coin
     h['markets'] << to_v1_format(c)
   end
   write("#{BASE_PATH}/all.json", h)
-
-  # version 2
-  h = {
-    "timestamp"=> coin['timestamp'],
-    "markets"=> []
-  }
-  CURRENCIES.each do |currency|
-    coin['markets'].each do |c|
-      h['markets'] << to_v2_format(c, currency)
-    end
-    write("#{BASE_PATH}/#{currency}/all.json", h)
-  end
 
   # version 4
   h = {
@@ -385,7 +364,6 @@ end
 def mkdirs
   mkdir(BASE_PATH, 'btc')
   mkdir(BASE_PATH, 'usd')
-  mkdir(BASE_PATH, 'v3')
   mkdir(BASE_PATH, 'v4')
   mkdir(BASE_PATH, 'v5')
   mkdir(BASE_PATH, 'v5/history')
