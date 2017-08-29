@@ -27,10 +27,6 @@ class Ki::Model
     # overrwrite so we don't use mongo at all
   end
 
-  def self.annotations
-    {}
-  end
-
   def allowed_versions
     %w(v5 v6 v8)
   end
@@ -57,12 +53,6 @@ class Ki::Model
 end
 
 class Ticker < Ki::Model
-  def self.annotations
-    {
-      params: ['version']
-    }
-  end
-
   def after_all
     validate_version
     t_version = params['version'] == 'v8' ? 'v6' : params['version']
@@ -108,9 +98,6 @@ class Ticker < Ki::Model
 end
 
 class Api < Ticker
-  def self.annotations
-    nil
-  end
 end
 
 class History < Ki::Model
