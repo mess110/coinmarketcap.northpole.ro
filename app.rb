@@ -5,7 +5,6 @@ module Ki
   module Orm
     class Db
       def establish_connection
-        {}
       end
     end
   end
