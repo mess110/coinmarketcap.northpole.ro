@@ -40,7 +40,7 @@ replace '?' with nil
 
 <br />
 
-version 5
+version 5 - planned deprecation date: 31st of October 2017
 ---------
 
 [/api/v5/all.json](http://coinmarketcap.northpole.ro/api/v5/all.json)
@@ -57,7 +57,7 @@ version 5
 
 <br />
 
-version 4
+version 4 - discontinued
 ---------
 
 [/api/v4/all.json](http://coinmarketcap.northpole.ro/api/v4/all.json)
