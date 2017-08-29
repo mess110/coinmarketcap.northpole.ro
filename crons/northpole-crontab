@@ -6,5 +6,5 @@
 # 
 # m h  dom mon dow   command
 
-*/5 * * * * /home/kiki/coinmarketcap.northpole.ro/current/crons/run.sh  # every 5 minutes
-0 2 * * * /home/kiki/coinmarketcap.northpole.ro/current/crons/saturn.sh # daily at 2 am
+*/5 * * * * ~/coinmarketcap.northpole.ro/current/crons/run.sh  # every 5 minutes
+0 2 * * * ~/coinmarketcap.northpole.ro/current/crons/saturn.sh # daily at 2 am

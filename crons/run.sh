@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
-source /home/kiki/.rvm/environments/ruby-2.1.0@coinmarketcap
-ruby /home/kiki/coinmarketcap.northpole.ro/current/script.rb > /home/kiki/coinmarketcap.northpole.ro/current/script.log 2>&1
+
+BASEDIR=$(dirname $0)
+source ~/.rvm/environments/ruby-2.1.0@coinmarketcap
+ruby ~/coinmarketcap.northpole.ro/current/script.rb > ~/coinmarketcap.northpole.ro/current/script.log 2>&1
