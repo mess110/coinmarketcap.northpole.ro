@@ -1,5 +1,7 @@
 require 'ki'
 
+$rabbit_hole = {}
+
 # Overwrite so we don't use mongo at all
 module Ki
   module Orm
@@ -50,6 +52,28 @@ class Ki::Model
   def coin_symbols_dir
     "public/api/#{params['version']}/*.json"
   end
+
+  def cache_read path
+    # return JSON.parse(File.read(path))
+
+    new_mtime = File.mtime(path)
+
+    if $rabbit_hole[path] == nil
+      $rabbit_hole[path] = {
+        json: JSON.parse(File.read(path)),
+        ts: new_mtime
+      }
+    end
+
+    if $rabbit_hole[path][:ts] != new_mtime
+      $rabbit_hole[path] = {
+        json: JSON.parse(File.read(path)),
+        ts: new_mtime
+      }
+    end
+
+    $rabbit_hole[path][:json].clone
+  end
 end
 
 class Ticker < Ki::Model
@@ -57,7 +81,7 @@ class Ticker < Ki::Model
     validate_version
     t_version = params['version'] == 'v8' ? 'v6' : params['version']
 
-    json = JSON.parse(File.read(File.join('public', 'api', t_version, 'all.json')))
+    json = cache_read(File.join('public', 'api', t_version, 'all.json'))
     json['markets'] = json['markets'].reverse
 
     if params['select'].present?
@@ -158,7 +182,7 @@ class History < Ki::Model
 
     begin
       t_version = params['version'] == 'v7' ? 'v6' : params['version']
-      json = JSON.parse(File.read(File.join('public', 'api', t_version, 'history', "#{params['coin']}_#{params['year']}.json")))
+      json = cache_read(File.join('public', 'api', t_version, 'history', "#{params['coin']}_#{params['year']}.json"))
 
       if ['v7', 'v8'].include?(params['version'])
         if params['format'] == 'array' && params['year'] != '14days'
@@ -219,7 +243,7 @@ end
 
 class Saturn < Ki::Model
   def after_all
-    @result = JSON.parse(File.read('saturn.json'))
+    @result = cache_read('saturn.json')
   rescue
     @result = {}
   end
