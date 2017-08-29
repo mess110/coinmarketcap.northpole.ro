@@ -1,16 +1,25 @@
 development:
+  middleware:
+    - ApiHandler
+    - PublicFileServer
   database:
     name: coinmarketcap_json_development
     host: 127.0.0.1
     port: 27017
 
 test:
+  middleware:
+    - ApiHandler
+    - PublicFileServer
   database:
     name: coinmarketcap_json_test
     host: 127.0.0.1
     port: 27017
 
 production:
+  middleware:
+    - ApiHandler
+    - PublicFileServer
   database:
     name: coinmarketcap_json
     host: 127.0.0.1
