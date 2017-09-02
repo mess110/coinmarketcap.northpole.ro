@@ -3,6 +3,8 @@
 need coinmarketcap data as json?
 --------------------------------
 
+Due to high server load, crawling has temporarily changed to every 10 minutes until a better option is found
+
 A straightforward JSON API for all the currencies and assets found on [coinmarketcap.com](http://coinmarketcap.com/ "coinmarketcap.com") crawled every 5 minutes
 
 <br />
