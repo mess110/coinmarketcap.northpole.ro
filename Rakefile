@@ -25,7 +25,7 @@ namespace :generate do
       html = @markdown.render(read(input))
 
       unless production?
-        html.gsub!('http://coinmarketcap.northpole.ro', '')
+        html.gsub!('//coinmarketcap.northpole.ro', '')
       end
 
       generate(output, read('views/top.html'), 'w')
