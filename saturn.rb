@@ -6,6 +6,7 @@
 require 'json'
 require 'nokogiri'
 require 'net/http'
+require 'open-uri'
 require 'fileutils'
 
 DAY = 60 * 60 * 24
@@ -151,6 +152,40 @@ def download_history
   puts "Script finished at #{now}. (#{(now - timestamp).to_i} seconds)"
 end
 
+def convert_to_number td
+  val = td.gsub(',', '')
+  return nil if val == '-'
+  val.to_i
+end
+
+def fill_blanks
+  identifier = 'bitcoin'
+
+  url = "https://coinmarketcap.com/currencies/#{identifier}/historical-data/?start=20130428&end=20170822"
+  cmc_data = open(url)
+  data = {}
+
+  @doc = Nokogiri::HTML(cmc_data)
+  @doc.css('.table tbody tr').each do |tr|
+    tds = tr.css('td').map { |e| e.text.strip }
+
+    date_key = Date.strptime(tds[0], '%b %d, %Y').strftime('%d-%m-%Y')
+    data[date_key] = {
+      price: tds[1].to_f,
+      volume: convert_to_number(tds[5]),
+      marketCap: convert_to_number(tds[6]),
+      year: date_key.split('-').last
+    }
+  end
+
+  data.each do |key, value|
+    year = value[:year]
+    p year
+    p key
+    p value
+  end
+end
+
 def help
   puts <<-EOF
 This script parses the local history and returns coin info on certain dates
@@ -178,6 +213,8 @@ else
     run_script
   when 'dl'
     download_history
+  when 'fill_blanks'
+    fill_blanks
   else
     help
   end
