@@ -14,9 +14,9 @@ version 8
 
 [swagger documentation](https://app.swaggerhub.com/apis/mess110/CoinMarketCap-Json-Api/v8)
 
-[bitcoin and dogecoin ticker](http://coinmarketcap.northpole.ro/ticker.json?identifier=bitcoin,dogecoin)
+[bitcoin and dogecoin ticker](//coinmarketcap.northpole.ro/ticker.json?identifier=bitcoin,dogecoin)
 
-[historical data bitcoin 2016](http://coinmarketcap.northpole.ro/history.json?coin=bitcoin&period=2016)
+[historical data bitcoin 2016](//coinmarketcap.northpole.ro/history.json?coin=bitcoin&period=2016)
 
 <br />
 
@@ -33,7 +33,7 @@ want to add your project to the list?
 
 <br />
 
-[/r/coinmarketcapjson](http://www.reddit.com/r/coinmarketcapjson/)
+[/r/coinmarketcapjson](https://www.reddit.com/r/coinmarketcapjson/)
 
 <a href="https://twitter.com/mess110" class="twitter-follow-button" data-show-count="true" data-show-screen-name="false">Follow @mess110</a>
 
