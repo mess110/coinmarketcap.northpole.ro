@@ -8,7 +8,6 @@ require 'fileutils'
 require 'bigdecimal'
 require 'logger'
 
-@logger = Logger.new(File.join('logs', 'script.log'), 'weekly')
 
 current_folder = File.dirname(File.expand_path(__FILE__))
 BASE_PATH = File.join(current_folder, 'public', 'api')
@@ -17,6 +16,7 @@ COIN_KEYS = ['position', 'name', 'symbol', 'identifier', 'category', 'marketCap'
 CURRENCIES = ['usd', 'btc']
 EXCHANGE_CURRENCIES = %w(usd aud brl cad chf cny eur gbp hkd idr inr jpy krw mxn rub)
 
+@logger = Logger.new(File.join(current_folder, 'logs', 'script.log'), 'weekly')
 cmc_data = open("https://coinmarketcap.com/all/views/all/")
 @doc = Nokogiri::HTML(cmc_data)
 
