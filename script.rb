@@ -6,6 +6,9 @@ require 'nokogiri'
 require 'pp'
 require 'fileutils'
 require 'bigdecimal'
+require 'logger'
+
+@logger = Logger.new(File.join('logs', 'script.log'), 'weekly')
 
 current_folder = File.dirname(File.expand_path(__FILE__))
 BASE_PATH = File.join(current_folder, 'public', 'api')
@@ -35,9 +38,10 @@ end
 
 def write path, hash
   File.open(path,'w') { |f| f.write(hash.to_json) }
+  @logger.info "Success: #{path}"
 rescue => e
-  puts "ERROR: could not write #{path}"
-  puts e
+  @logger.error "could not write #{path}"
+  @logger.error e.backtrace
 end
 
 # converts all coins in hash['markets'] to old json format
@@ -149,9 +153,9 @@ def write_hourly coin, path_key, vkey
   end
   write(path, to_cleanup_hash)
 rescue => e
-  puts "ERROR: #{coin}:"
-  puts path
-  puts e.backtrace
+  @logger.error "#{coin}:"
+  @logger.error path
+  @logger.error e.backtrace
 end
 
 def write_history coin, path_key, vkey
@@ -165,9 +169,9 @@ def write_history coin, path_key, vkey
 
   whistory hash, key, coin, path
 rescue => e
-  puts "ERROR: write_history #{coin['symbol']}:"
-  puts path
-  puts e.backtrace
+  @logger.error "write_history #{coin['symbol']}:"
+  @logger.error path
+  @logger.error e.backtrace
 end
 
 def whistory hash, key, coin, path
@@ -347,7 +351,7 @@ def mkdirs
 end
 
 def run_script
-  puts "Starting script at #{Time.at(@ts)}"
+  @logger.info "Starting script at #{Time.at(@ts)}"
   mkdirs
   json_data = get_json_data('#currencies-all')
 
@@ -357,7 +361,7 @@ def run_script
   write_all json_data
 
   now = Time.now
-  puts "Script finished at #{now}. (#{(now - @ts).to_i} seconds)"
+  @logger.info "Script finished at #{now}. (#{(now - @ts).to_i} seconds)"
 end
 
 def convert_history_v5_v6
