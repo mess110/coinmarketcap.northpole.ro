@@ -15,7 +15,7 @@ end
 
 def expect_recent_timestamp timestamp
   ts = Time.at(timestamp)
-  fail 'timestamp not updated in the last 10 minutes' if Time.now - ts > 10 * 60
+  fail 'timestamp not updated in the last 20 minutes' if Time.now - ts > 20 * 60
   ts
 end
 
