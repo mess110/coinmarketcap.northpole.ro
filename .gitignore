@@ -5,5 +5,5 @@ public/doc.html
 coinmarketcap
 tmp/
 config.yml
-*.log
+logs/
 saturn.json

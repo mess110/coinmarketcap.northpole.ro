@@ -15,6 +15,7 @@ BASE_PATH = File.join(current_folder, 'public', 'api')
 COIN_KEYS = ['position', 'name', 'symbol', 'identifier', 'category', 'marketCap', 'price', 'availableSupply', 'availableSupplyNumber', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
 CURRENCIES = ['usd', 'btc']
 EXCHANGE_CURRENCIES = %w(usd aud brl cad chf cny eur gbp hkd idr inr jpy krw mxn rub)
+LOGO_SIZES = %w(16x16 32x32 64x64 128x128)
 
 @logger = Logger.new(File.join(current_folder, 'logs', 'script.log'), 'weekly')
 cmc_data = open("https://coinmarketcap.com/all/views/all/")
@@ -348,6 +349,10 @@ def mkdirs
   mkdir(BASE_PATH, 'v6/history')
   mkdir(BASE_PATH, 'v8')
   mkdir(BASE_PATH, 'v8/history')
+  mkdir(BASE_PATH, 'v8/logos')
+  LOGO_SIZES.each do |size|
+    mkdir(BASE_PATH, 'v8/logos', size)
+  end
 end
 
 def run_script
@@ -430,6 +435,27 @@ def update_to_volume_v6
   end
 end
 
+def dl_logos
+  @logger.info "Starting script at #{Time.at(@ts)}"
+  mkdirs
+  json_data = get_json_data('#currencies-all')
+
+  json_data['markets'].each do |h|
+    LOGO_SIZES.each do |size|
+      logo_url = "https://files.coinmarketcap.com/static/img/coins/#{size}/#{h['identifier']}.png"
+      logo_path = File.join(BASE_PATH, 'v8', 'logos', size, "#{h['identifier']}.png")
+
+      open(logo_path, 'wb') do |file|
+        @logger.info "Download logo for #{h['identifier']} (#{size})"
+        file << open(logo_url).read
+      end
+    end
+  end
+
+  now = Time.now
+  @logger.info "Script finished at #{now}. (#{(now - @ts).to_i} seconds)"
+end
+
 def help
   puts <<-EOF
 This is the CLI which gathers all the data from coinmarketcap.com
@@ -437,6 +463,7 @@ This is the CLI which gathers all the data from coinmarketcap.com
 List of commands:
 
   * run - queries coinmarketcap.com, parses the data and writes it to disk
+  * logos - download all logos from coinmarketcap.com
   * convert_history_v5_v6 - converts history from v5 to v6
   * convert_history_v6_v8 - converts history from v6 to v8
   * update_to_volume_v6
@@ -457,6 +484,8 @@ else
   case ARGV[0]
   when 'run'
     run_script
+  when 'logos'
+    dl_logos
   when 'convert_history_v5_v6'
     convert_history_v5_v6
   when 'update_to_volume_v6'
