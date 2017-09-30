@@ -94,6 +94,8 @@ def run_script
     # TODO: what if no history
     meta = all_history['history'].values.last
 
+    next if meta.nil?
+
     case meta['category']
     when 'currency'
       output[:active_currencies] += 1
