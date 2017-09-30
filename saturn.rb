@@ -25,15 +25,22 @@ def read coin
   end
 
   output
+rescue => e
+  puts "Error #{e} parsing #{coin}"
+  return {'history' => {}}
 end
 
 def req url
   url = URI.parse(url)
+  puts url
   reqs = Net::HTTP::Get.new(url.to_s)
   res = Net::HTTP.start(url.host, url.port) { |http|
     http.request(reqs)
   }
   JSON.parse(res.body)
+rescue => e
+  puts "Error #{e} parsing #{url}"
+  {}
 end
 
 def write path, json
