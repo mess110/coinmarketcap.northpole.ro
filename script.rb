@@ -246,7 +246,7 @@ def get_json_data table_id
     td_position = tds[0].text.strip
 
     begin
-      td_name = tds[1].children[1]['alt'].strip
+      td_name = tds[1].children[5].text
     rescue
       td_name = tds[1].text.strip
     end
