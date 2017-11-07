@@ -14,7 +14,7 @@ BASE_PATH = File.join(current_folder, 'public', 'api')
 # order is important because we zip this
 COIN_KEYS = ['position', 'name', 'symbol', 'identifier', 'category', 'marketCap', 'price', 'availableSupply', 'availableSupplyNumber', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
 CURRENCIES = ['usd', 'btc']
-EXCHANGE_CURRENCIES = %w(usd aud brl cad chf cny eur gbp hkd idr inr jpy krw mxn rub)
+EXCHANGE_CURRENCIES = %w(usd aud brl cad chf clp cny czk dkk eur gbp hkd huf idr ils inr jpy krw mxn myr nok nzd php pkr pln rub sek sgd thb try twd zar)
 LOGO_SIZES = %w(16x16 32x32 64x64 128x128)
 
 @logger = Logger.new(File.join(current_folder, 'logs', 'script.log'), 'weekly')
