@@ -31,8 +31,8 @@ end
 
 
 expect_recent 'http://coinmarketcap.northpole.ro/api/doge.json'
-expect_recent 'http://coinmarketcap.northpole.ro/api/v5/DOGE.json'
-expect_history 'http://coinmarketcap.northpole.ro/api/v5/history/DOGE_2016.json'
+# expect_recent 'http://coinmarketcap.northpole.ro/api/v5/DOGE.json'
+# expect_history 'http://coinmarketcap.northpole.ro/api/v5/history/DOGE_2016.json'
 btc_timestamp = expect_recent 'http://coinmarketcap.northpole.ro/ticker.json?identifier=bitcoin'
 
 puts "Last run was at #{btc_timestamp}"

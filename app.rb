@@ -30,7 +30,7 @@ class Ki::Model
   end
 
   def allowed_versions
-    %w(v5 v6 v8)
+    %w(v6 v8)
   end
 
   def validate_version

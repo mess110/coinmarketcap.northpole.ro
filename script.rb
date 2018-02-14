@@ -118,10 +118,6 @@ def write_one coin
   # version 1
   write("#{BASE_PATH}/#{coin['symbol'].downcase}.json", to_v1_format(coin))
 
-  # version 5
-  coin_path = "#{BASE_PATH}/v5/#{coin['symbol']}.json"
-  write(coin_path, coin)
-
   # version 6
   coin_path = "#{BASE_PATH}/v6/#{coin['symbol']}.json"
   v6_coin = to_v6_format(coin)
@@ -199,9 +195,6 @@ def write_all coin
     h['markets'] << to_v1_format(c)
   end
   write("#{BASE_PATH}/all.json", h)
-
-  # version 5
-  write("#{BASE_PATH}/v5/all.json", coin)
 
   # version 6
   all_clone = coin.clone
@@ -343,8 +336,6 @@ end
 def mkdirs
   mkdir(BASE_PATH, 'btc')
   mkdir(BASE_PATH, 'usd')
-  mkdir(BASE_PATH, 'v5')
-  mkdir(BASE_PATH, 'v5/history')
   mkdir(BASE_PATH, 'v6')
   mkdir(BASE_PATH, 'v6/history')
   mkdir(BASE_PATH, 'v8')
@@ -367,22 +358,6 @@ def run_script
 
   now = Time.now
   @logger.info "Script finished at #{now}. (#{(now - @ts).to_i} seconds)"
-end
-
-def convert_history_v5_v6
-  mkdirs
-  Dir["#{BASE_PATH}/v5/history/*.json"].each do |path|
-    hash = JSON.parse(File.read(path))
-    next if hash['history'].nil?
-    next if hash['history'].empty?
-    hash['history'].keys.each do |day|
-      target = hash['history'][day]
-      next if hash['history'][day]['position'].is_a? Numeric
-      hash['history'][day] = to_v6_format(target)
-    end
-    new_path = path.gsub('/api/v5/history', '/api/v6/history')
-    write(new_path, hash)
-  end
 end
 
 def convert_history_v6_v8
@@ -464,7 +439,6 @@ List of commands:
 
   * run - queries coinmarketcap.com, parses the data and writes it to disk
   * logos - download all logos from coinmarketcap.com
-  * convert_history_v5_v6 - converts history from v5 to v6
   * convert_history_v6_v8 - converts history from v6 to v8
   * update_to_volume_v6
   * help - this text
@@ -486,8 +460,6 @@ else
     run_script
   when 'logos'
     dl_logos
-  when 'convert_history_v5_v6'
-    convert_history_v5_v6
   when 'update_to_volume_v6'
     update_to_volume_v6
   when 'convert_history_v6_v8'
