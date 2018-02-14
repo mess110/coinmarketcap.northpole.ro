@@ -33,19 +33,19 @@ GEM
       sass
       thor
     method_source (0.8.2)
-    mini_portile (0.5.2)
+    mini_portile2 (2.3.0)
     mongo (1.9.2)
       bson (~> 1.9.2)
     net-scp (1.1.2)
       net-ssh (>= 2.6.5)
     net-ssh (2.8.0)
-    nokogiri (1.6.1)
-      mini_portile (~> 0.5.0)
+    nokogiri (1.8.1)
+      mini_portile2 (~> 2.3.0)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    rack (1.6.1)
+    rack (1.6.8)
     rack-cors (0.4.1)
     rack-parser (0.7.0)
       rack
@@ -86,12 +86,12 @@ DEPENDENCIES
   fakeweb
   highline
   ki (= 0.4.8)
-  nokogiri
+  nokogiri (= 1.8.1)
   pry
-  rack (= 1.6.1)
+  rack (= 1.6.8)
   redcarpet
   rspec
   rvm-capistrano
 
 BUNDLED WITH
-   1.11.2
+   1.16.1
