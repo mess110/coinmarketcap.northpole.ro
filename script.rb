@@ -288,17 +288,17 @@ def get_json_data table_id
         td_volume_24h[currency] = '0.0 %'
       end
       begin
-        td_change_1h[currency] = tds[7].attribute("data-#{currency}").text.strip
+        td_change_1h[currency] = tds[7].attribute("data-percent#{currency}").text.strip
       rescue
         td_change_1h[currency] = '?'
       end
       begin
-        td_change_24h[currency] = tds[8].attribute("data-#{currency}").text.strip
+        td_change_24h[currency] = tds[8].attribute("data-percent#{currency}").text.strip
       rescue
         td_change_24h[currency] = '?'
       end
       begin
-        td_change_7d[currency] = tds[9].attribute("data-#{currency}").text.strip
+        td_change_7d[currency] = tds[9].attribute("data-percent#{currency}").text.strip
       rescue
         td_change_7d[currency] = '?'
       end
