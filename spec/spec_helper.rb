@@ -14,9 +14,8 @@
 # users commonly want.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
-require 'fakeweb'
-FakeWeb.allow_net_connect = false
-FakeWeb.register_uri(:get, 'https://coinmarketcap.com/all/views/all/', body: File.read('spec/assets/all.html'))
+
+# require './script.rb'
 
 RSpec.configure do |config|
   config.before(:all) {}

@@ -11,5 +11,4 @@ gem 'ki', '0.4.8'
 group :development do
   gem 'pry'
   gem 'rspec'
-  gem 'fakeweb'
 end
