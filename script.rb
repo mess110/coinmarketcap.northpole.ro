@@ -137,7 +137,9 @@ def write_hourly coin, path_key, vkey
   time_at = Time.at(@ts)
   path = "#{BASE_PATH}/#{vkey}/history/#{path_key}_14days.json"
 
-  write(path, { 'symbol' => coin['symbol'], 'identifier' => coin['identifier'], 'history' => {} }) unless File.exist?(path)
+  if !File.exist?(path) || File.zero?(path)
+    write(path, { 'symbol' => coin['symbol'], 'identifier' => coin['identifier'], 'history' => {} })
+  end
 
   hash = JSON.parse(File.read(path))
   key = time_at.strftime('%H-%d-%m-%Y')
