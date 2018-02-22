@@ -1,5 +1,6 @@
 public/api/*.json
 public/api/**/*.json
+public/api/v8/
 public/index.html
 public/doc.html
 coinmarketcap
