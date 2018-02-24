@@ -12,7 +12,7 @@ require 'logger'
 current_folder = File.dirname(File.expand_path(__FILE__))
 BASE_PATH = File.join(current_folder, 'public', 'api')
 # order is important because we zip this
-COIN_KEYS = ['position', 'name', 'symbol', 'identifier', 'category', 'marketCap', 'price', 'availableSupply', 'availableSupplyNumber', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp']
+COIN_KEYS = ['position', 'name', 'symbol', 'identifier', 'category', 'marketCap', 'price', 'availableSupply', 'availableSupplyNumber', 'volume24', 'change1h', 'change7h', 'change7d', 'timestamp', 'coinLogoId']
 CURRENCIES = ['usd', 'btc']
 EXCHANGE_CURRENCIES = %w(usd aud brl cad chf clp cny czk dkk eur gbp hkd huf idr ils inr jpy krw mxn myr nok nzd php pkr pln rub sek sgd thb try twd zar)
 LOGO_SIZES = %w(16x16 32x32 64x64 128x128)
@@ -82,8 +82,9 @@ def to_general_number n
 end
 
 def to_v6_format coin
-
   coin_clone = coin.clone
+  coin_clone.delete('coinLogoId')
+
   # this will ensure the order
   coin_clone['change24h'] = coin_clone.delete('change7h')
   coin_clone['change7d'] = coin_clone.delete('change7d')
@@ -128,7 +129,7 @@ def write_one coin
   # version 8
   return if coin['identifier'].nil?
   coin_path = "#{BASE_PATH}/v8/#{coin['identifier']}.json"
-  write(coin_path, coin)
+  write(coin_path, v6_coin)
   write_history(v6_coin, v6_coin['identifier'], 'v8')
   write_hourly(v6_coin, v6_coin['identifier'], 'v8')
 end
@@ -241,6 +242,12 @@ def get_json_data table_id
     td_position = tds[0].text.strip
 
     begin
+      coin_logo = tds[1].children[1].attr('class').split(' ')[0].split('-').last
+    rescue
+      coin_logo = nil
+    end
+
+    begin
       td_name = tds[1].children[5].text
     rescue
       td_name = tds[1].text.strip
@@ -323,6 +330,7 @@ def get_json_data table_id
       td_change_24h,
       td_change_7d,
       @ts,
+      coin_logo
     ]
 
     markets << Hash[COIN_KEYS.zip(coin)]
@@ -419,7 +427,7 @@ def dl_logos
 
   json_data['markets'].each do |h|
     LOGO_SIZES.each do |size|
-      logo_url = "https://files.coinmarketcap.com/static/img/coins/#{size}/#{h['identifier']}.png"
+      logo_url = "https://files.coinmarketcap.com/static/img/coins/#{size}/#{h['coinLogoId']}.png"
       logo_path = File.join(BASE_PATH, 'v8', 'logos', size, "#{h['identifier']}.png")
 
       open(logo_path, 'wb') do |file|

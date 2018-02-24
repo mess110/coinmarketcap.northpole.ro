@@ -15,7 +15,11 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
-# require './script.rb'
+require 'json'
+
+def coin(identifier = 'bitcoin')
+  JSON.parse(File.read('public/api/v8/bitcoin.json'))
+end
 
 RSpec.configure do |config|
   config.before(:all) {}
