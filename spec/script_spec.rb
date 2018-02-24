@@ -24,4 +24,26 @@ describe 'script' do
     end
     expect(coin['identifier']).to eq 'bitcoin'
   end
+
+  it 'has the correct types' do
+    expect(coin['position']).to be_a Fixnum
+    expect(coin['name']).to be_a String
+    expect(coin['symbol']).to be_a String
+    expect(coin['identifier']).to be_a String
+    expect(coin['category']).to be_a String
+    expect(coin['marketCap']).to be_a Hash
+    expect(coin['marketCap']['usd']).to be_a Float
+    expect(coin['marketCap']['btc']).to be_a Float
+    expect(coin['price']).to be_a Hash
+    expect(coin['price']['usd']).to be_a Float
+    expect(coin['price']['btc']).to be_a Float
+    expect(coin['availableSupply']).to be_a Fixnum
+    expect(coin['volume24']).to be_a Hash
+    expect(coin['volume24']['usd']).to be_a Float
+    expect(coin['volume24']['btc']).to be_a Float
+    expect(coin['change1h']).to be_a Float
+    expect(coin['change24h']).to be_a Float
+    expect(coin['change7d']).to be_a Float
+    expect(coin['timestamp']).to be_a Fixnum
+  end
 end
