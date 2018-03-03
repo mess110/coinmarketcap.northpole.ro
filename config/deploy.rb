@@ -1,8 +1,9 @@
 # config valid only for Capistrano 3.1
-lock '3.1.0'
+lock '3.10.1'
 
 set :application, 'coinmarketcap.northpole.ro'
 set :repo_url, 'https://github.com/mess110/coinmarketcap.northpole.ro.git'
+set :format_options, log_file: 'logs/capistrano.log'
 
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
