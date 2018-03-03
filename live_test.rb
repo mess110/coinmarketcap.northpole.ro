@@ -29,11 +29,23 @@ def expect_history url
   fail 'not a history file' if json['history'].empty?
 end
 
+puts 'Checking http'
+expect_recent 'http://coinmarketcap.northpole.ro/api/v8/bitcoin.json'
 
-expect_recent 'http://coinmarketcap.northpole.ro/api/doge.json'
-# expect_recent 'http://coinmarketcap.northpole.ro/api/v5/DOGE.json'
-# expect_history 'http://coinmarketcap.northpole.ro/api/v5/history/DOGE_2016.json'
+puts 'Checking https'
+expect_recent 'https://coinmarketcap.northpole.ro/api/v8/dogecoin.json'
+
+puts 'Checking coins.json'
+json_req 'https://coinmarketcap.northpole.ro/coins.json'
+
+puts 'Checking ticker.json'
 btc_timestamp = expect_recent 'http://coinmarketcap.northpole.ro/ticker.json?identifier=bitcoin'
+
+puts 'Checking history.json'
+expect_history 'https://coinmarketcap.northpole.ro/history.json?coin=bitcoin'
+
+puts 'Checking saturn.json'
+json_req 'https://coinmarketcap.northpole.ro/saturn.json'
 
 puts "Last run was at #{btc_timestamp}"
 puts 'ok'
