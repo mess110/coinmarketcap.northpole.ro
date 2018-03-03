@@ -31,7 +31,7 @@ set :linked_dirs, %w{public/api logs}
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
-set :rvm_ruby_string, '2.1.0@coinmarketcap'
+set :rvm_ruby_string, '2.4.3@coinmarketcap.2.4.3'
 
 # Default value for keep_releases is 5
 # set :keep_releases, 5
@@ -43,8 +43,8 @@ namespace :deploy do
     on roles(:app), in: :sequence, wait: 5 do
       execute :touch, release_path.join('tmp/restart.txt')
       # TODO fix this hack
-      execute "source /home/kiki/.rvm/environments/ruby-2.1.0@coinmarketcap;cd #{release_path}; rake generate:doc"
-      execute "source /home/kiki/.rvm/environments/ruby-2.1.0@coinmarketcap;cd #{release_path}; ruby saturn.rb"
+      execute "source /home/kiki/.rvm/environments/ruby-2.4.3@coinmarketcap.2.4.3 && cd #{release_path} && rake generate:doc"
+      execute "source /home/kiki/.rvm/environments/ruby-2.4.3@coinmarketcap.2.4.3 && cd #{release_path} && ruby saturn.rb"
     end
   end
 
