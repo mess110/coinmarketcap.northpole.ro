@@ -18,6 +18,7 @@ EXCHANGE_CURRENCIES = %w(usd aud brl cad chf clp cny czk dkk eur gbp hkd huf idr
 LOGO_SIZES = %w(16x16 32x32 64x64 128x128)
 
 @logger = Logger.new(File.join(current_folder, 'logs', 'script.log'), 'weekly')
+@logger.level = Logger::INFO
 cmc_data = open("https://coinmarketcap.com/all/views/all/")
 @doc = Nokogiri::HTML(cmc_data)
 
@@ -39,10 +40,10 @@ end
 
 def write path, hash
   File.open(path,'w') { |f| f.write(hash.to_json) }
-  @logger.info "Success: #{path}"
+  @logger.debug "Success: #{path}"
 rescue => e
   @logger.error "could not write #{path}"
-  @logger.error e.backtrace
+  @logger.debug e.backtrace
 end
 
 # converts all coins in hash['markets'] to old json format
@@ -143,9 +144,8 @@ def write_hourly coin, path_key, vkey
   end
   write(path, to_cleanup_hash)
 rescue => e
-  @logger.error "#{coin}:"
-  @logger.error path
-  @logger.error e.backtrace
+  @logger.error "write_hourly #{coin['identifier']}: #{path}"
+  @logger.debug e.backtrace
 end
 
 def write_history coin, path_key, vkey
@@ -159,9 +159,8 @@ def write_history coin, path_key, vkey
 
   whistory hash, key, coin, path
 rescue => e
-  @logger.error "write_history #{coin['symbol']}:"
-  @logger.error path
-  @logger.error e.backtrace
+  @logger.error "write_history #{coin['symbol']}: #{path}"
+  @logger.debug e.backtrace
 end
 
 def whistory hash, key, coin, path
@@ -370,7 +369,7 @@ def dl_logos
       logo_path = File.join(BASE_PATH, 'v8', 'logos', size, "#{h['identifier']}.png")
 
       open(logo_path, 'wb') do |file|
-        @logger.info "Download logo for #{h['identifier']} (#{size})"
+        @logger.debug "Download logo for #{h['identifier']} (#{size})"
         file << open(logo_url).read
       end
     end
