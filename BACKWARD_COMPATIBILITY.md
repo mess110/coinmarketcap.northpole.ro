@@ -9,7 +9,7 @@ A straightforward JSON API for all the currencies and assets found on [coinmarke
 
 <br />
 
-version 6
+version 6 - discontinued
 ---------
 
 change7h renamed to change24h;
@@ -40,7 +40,7 @@ replace '?' with nil
 
 <br />
 
-version 5 - planned deprecation date: 31st of October 2017
+version 5 - discontinued
 ---------
 
 [/api/v5/all.json](https://coinmarketcap.northpole.ro/api/v5/all.json)
