@@ -104,8 +104,17 @@ def to_v6_format coin
     end
   end
   coin_clone['volume24'].keys.each do |currency|
-    btc_price = BigDecimal(coin_clone['price'][currency].to_s) / BigDecimal(coin_clone['price']['btc'].to_s)
-    coin_clone['volume24'][currency] = btc_price.nan? ? 0.to_f : (BigDecimal(coin_clone['volume24']['btc'].to_s) * btc_price).to_f
+    bd_price_currency = coin_clone['price'][currency].to_s
+    bd_price_currency = '0' if bd_price_currency == '' || bd_price_currency.nil?
+
+    bd_price_btc = coin_clone['price']['btc'].to_s
+    bd_price_btc = '0' if bd_price_btc == '' || bd_price_btc.nil?
+
+    bd_volume24_btc = coin_clone['volume24']['btc'].to_s
+    bd_volume24_btc = '0' if bd_volume24_btc == '' || bd_volume24_btc.nil? || bd_volume24_btc == 'None'
+
+    btc_price = BigDecimal(bd_price_currency) / BigDecimal(bd_price_btc)
+    coin_clone['volume24'][currency] = btc_price.nan? ? 0.to_f : (BigDecimal(bd_volume24_btc) * btc_price).to_f
   end
 
   coin_clone
@@ -359,7 +368,7 @@ def run_script
 end
 
 def dl_logos
-  @logger.info "Starting script at #{Time.at(@ts)}"
+  @logger.info "Starting dl_logos at #{Time.at(@ts)}"
   mkdirs
   json_data = get_json_data('#currencies-all')
 
@@ -376,7 +385,7 @@ def dl_logos
   end
 
   now = Time.now
-  @logger.info "Script finished at #{now}. (#{(now - @ts).to_i} seconds)"
+  @logger.info "gl_logos finished at #{now}. (#{(now - @ts).to_i} seconds)"
 end
 
 def help
