@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'script' do
+describe 'script.rb' do
   let(:v8) { 'public/api/v8' }
 
   describe 'single file' do

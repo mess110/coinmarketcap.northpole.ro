@@ -151,4 +151,11 @@ namespace :generate do
   end
 end
 
+namespace :spec do
+  desc 'run live tests'
+  task :live do
+    puts `RSPEC_LIVE=1 rspec --format=documentation`
+  end
+end
+
 task :default => :spec

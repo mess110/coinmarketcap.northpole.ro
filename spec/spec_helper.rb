@@ -16,6 +16,8 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require 'json'
+require 'open-uri'
+require 'date'
 
 def coin(identifier = 'bitcoin')
   JSON.parse(File.read('public/api/v8/bitcoin.json'))
@@ -25,9 +27,35 @@ def coin_history(identifier = 'bitcoin')
   JSON.parse(File.read("public/api/v8/history/bitcoin_#{Time.now.year}.json"))
 end
 
+def saturn
+  JSON.parse(File.read("public/api/v8/history/saturn.json"))
+end
+
+def json_req url
+  req = open(url)
+  JSON.parse(req.read)
+end
+
+RSpec::Matchers.define :be_updated_within do |minutes|
+  match do |actual|
+    ts = Time.at(actual['timestamp'])
+    Time.now - ts < minutes * 60
+  end
+end
+
+RSpec::Matchers.define :have_key do |key|
+  match do |actual|
+    actual.key? key
+  end
+end
+
 RSpec.configure do |config|
   config.before(:all) {}
   config.after(:all) {}
+
+  if ENV['RSPEC_LIVE'].nil?
+    config.filter_run_excluding live: true
+  end
 
 =begin
   # These two settings work together to allow you to limit a spec run
