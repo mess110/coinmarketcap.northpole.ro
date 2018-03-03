@@ -25,7 +25,7 @@ describe 'script' do
     end
 
     it 'has the correct types' do
-      expect(coin['position']).to be_a Fixnum
+      expect(coin['position']).to be_a Integer
       expect(coin['name']).to be_a String
       expect(coin['symbol']).to be_a String
       expect(coin['identifier']).to be_a String
@@ -36,14 +36,14 @@ describe 'script' do
       expect(coin['price']).to be_a Hash
       expect(coin['price']['usd']).to be_a Float
       expect(coin['price']['btc']).to be_a Float
-      expect(coin['availableSupply']).to be_a Fixnum
+      expect(coin['availableSupply']).to be_a Integer
       expect(coin['volume24']).to be_a Hash
       expect(coin['volume24']['usd']).to be_a Float
       expect(coin['volume24']['btc']).to be_a Float
       expect(coin['change1h']).to be_a Float
       expect(coin['change24h']).to be_a Float
       expect(coin['change7d']).to be_a Float
-      expect(coin['timestamp']).to be_a Fixnum
+      expect(coin['timestamp']).to be_a Integer
     end
   end
 
