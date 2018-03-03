@@ -53,7 +53,7 @@ class Ki::Model
     "public/api/#{params['version']}/*.json"
   end
 
-  def cache_read path
+  def cache_fs_read path
     # return JSON.parse(File.read(path))
 
     new_mtime = File.mtime(path)
@@ -74,6 +74,21 @@ class Ki::Model
 
     $rabbit_hole[path][:json].clone
   end
+
+  def add_to_cache key, item
+    $rabbit_hole[key] = {
+      json: item,
+      ts: Time.now
+    }
+  end
+
+  def get_from_cache key, hours
+    if $rabbit_hole[key] != nil
+      if $rabbit_hole[key][:ts] + hours * 60 * 60 > Time.now
+        return $rabbit_hole[key][:json]
+      end
+    end
+  end
 end
 
 class Ticker < Ki::Model
@@ -81,7 +96,7 @@ class Ticker < Ki::Model
     validate_version
     t_version = params['version']
 
-    json = cache_read(File.join('public', 'api', t_version, 'all', 'all.json'))
+    json = cache_fs_read(File.join('public', 'api', t_version, 'all', 'all.json'))
     json['markets'] = json['markets'].reverse
 
     if params['select'].present?
@@ -178,7 +193,7 @@ class History < Ki::Model
 
     begin
       t_version = params['version']
-      json = cache_read(File.join('public', 'api', t_version, 'history', "#{params['coin']}_#{params['year']}.json"))
+      json = cache_fs_read(File.join('public', 'api', t_version, 'history', "#{params['coin']}_#{params['year']}.json"))
 
       if params['format'] == 'array' && params['year'] != '14days'
         history = []
@@ -200,32 +215,42 @@ class History < Ki::Model
 end
 
 class Coins < Ki::Model
+  CACHE_KEY = 'coins.json'
+
   def after_all
     validate_version
 
-    all_history = Dir["public/api/#{params['version']}/history/*.json"]
+    from_cache = get_from_cache CACHE_KEY, 12 # hour
 
-    coins = coin_symbols.map do |coin_symbol|
-      {
-        ticker: "/ticker.json?identifier=#{coin_symbol}&version=#{params['version']}",
-        history: "/history.json?coin=#{coin_symbol}&period=2017",
-        last14Days: "/history.json?coin=#{coin_symbol}&period=14days",
-        identifier: coin_symbol,
-        periods: all_history.select { |e| e.include?("/history/#{coin_symbol}_") }.map { |e| e.split('_').last.split('.').first }
+    if from_cache.nil?
+      all_history = Dir["public/api/#{params['version']}/history/*.json"]
+
+      coins = coin_symbols.map do |coin_symbol|
+        {
+          ticker: "/ticker.json?identifier=#{coin_symbol}&version=#{params['version']}",
+          history: "/history.json?coin=#{coin_symbol}&period=2017",
+          last14Days: "/history.json?coin=#{coin_symbol}&period=14days",
+          identifier: coin_symbol,
+          periods: all_history.select { |e| e.include?("/history/#{coin_symbol}_") }.map { |e| e.split('_').last.split('.').first }
+        }
+      end
+
+      @result = {
+        coins: coins,
+        tickerVersions: allowed_versions,
+        historyVersions: History::allowed_versions
       }
-    end
 
-    @result = {
-      coins: coins,
-      tickerVersions: allowed_versions,
-      historyVersions: History::allowed_versions
-    }
+      add_to_cache(CACHE_KEY, @result)
+    else
+      @result = from_cache
+    end
   end
 end
 
 class Saturn < Ki::Model
   def after_all
-    @result = cache_read('saturn.json')
+    @result = cache_fs_read('saturn.json')
   rescue
     @result = {}
   end

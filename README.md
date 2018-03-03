@@ -39,6 +39,6 @@ want to add your project to the list?
 
 <br />
 
-Bitcoin Donations: 1LCzNB9SmpFcdUhCXadpLzHmWAnwnuAw9k
+Bitcoin Donations: 3DW8FVxSwi6TF122GHintxTncrhnoT3x2H
 
-Doge Donations: DN3qUPSKZ5vXgRU5zUvTRePo63V59Mc8id
+Doge Donations: DKUFsrSwq2pQ7fEdD265eWfzwxK1TPc72N
