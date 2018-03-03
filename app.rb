@@ -58,14 +58,7 @@ class Ki::Model
 
     new_mtime = File.mtime(path)
 
-    if $rabbit_hole[path] == nil
-      $rabbit_hole[path] = {
-        json: JSON.parse(File.read(path)),
-        ts: new_mtime
-      }
-    end
-
-    if $rabbit_hole[path][:ts] != new_mtime
+    if $rabbit_hole[path] == nil || $rabbit_hole[path][:ts] != new_mtime
       $rabbit_hole[path] = {
         json: JSON.parse(File.read(path)),
         ts: new_mtime
