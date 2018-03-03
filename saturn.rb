@@ -26,7 +26,7 @@ def read coin
 
   output
 rescue => e
-  puts "saturn.rb: Error #{e} parsing #{coin['identifier']}"
+  puts "saturn.rb: Error #{e} parsing #{coin['symbol']}"
   return {'history' => {}}
 end
 
@@ -39,7 +39,7 @@ def req url
   }
   JSON.parse(res.body)
 rescue => e
-  puts "saturn.rb: Error #{e} parsing #{url}"
+  puts "saturn.rb: Error #{e} requesting #{url}"
   {}
 end
 
