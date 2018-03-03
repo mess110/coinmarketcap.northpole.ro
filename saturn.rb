@@ -58,7 +58,7 @@ def run_script
   puts "Starting script at #{Time.at(timestamp)}"
 
   base_path = File.join(CURRENT_FOLDER, 'public/api/v8/history/')
-  output_path = File.join(CURRENT_FOLDER, 'saturn.json')
+  output_path = File.join(CURRENT_FOLDER, 'public/api/v8/history/saturn.json')
 
   years = (2016..Time.now.year).to_a
   target_days_ago = [1, 2, 3, 14, 30, 60, 90, 120, 150, 180, 365]
