@@ -30,7 +30,7 @@ class Ki::Model
   end
 
   def allowed_versions
-    %w(v6 v8)
+    %w(v8)
   end
 
   def validate_version
@@ -79,9 +79,9 @@ end
 class Ticker < Ki::Model
   def after_all
     validate_version
-    t_version = params['version'] == 'v8' ? 'v6' : params['version']
+    t_version = params['version']
 
-    json = cache_read(File.join('public', 'api', t_version, 'all.json'))
+    json = cache_read(File.join('public', 'api', t_version, 'all', 'all.json'))
     json['markets'] = json['markets'].reverse
 
     if params['select'].present?
@@ -126,7 +126,7 @@ end
 
 class History < Ki::Model
   def self.allowed_versions
-    %w(v6 v7 v8)
+    %w(v8)
   end
 
   def allowed_versions
@@ -138,11 +138,7 @@ class History < Ki::Model
   end
 
   def coin_symbols_dir
-    if params['version'] == 'v7'
-      'public/api/v6/*.json'
-    else
-      "public/api/#{params['version']}/*.json"
-    end
+    "public/api/#{params['version']}/*.json"
   end
 
   def validate_format
@@ -181,20 +177,18 @@ class History < Ki::Model
     validate_year
 
     begin
-      t_version = params['version'] == 'v7' ? 'v6' : params['version']
+      t_version = params['version']
       json = cache_read(File.join('public', 'api', t_version, 'history', "#{params['coin']}_#{params['year']}.json"))
 
-      if ['v7', 'v8'].include?(params['version'])
-        if params['format'] == 'array' && params['year'] != '14days'
-          history = []
+      if params['format'] == 'array' && params['year'] != '14days'
+        history = []
 
-          json['history'].keys.each do |day|
-            json['history'][day]['date'] = day
-            history.push json['history'][day]
-          end
-
-          json['history'] = history
+        json['history'].keys.each do |day|
+          json['history'][day]['date'] = day
+          history.push json['history'][day]
         end
+
+        json['history'] = history
       end
 
     rescue Errno::ENOENT
@@ -212,25 +206,13 @@ class Coins < Ki::Model
     all_history = Dir["public/api/#{params['version']}/history/*.json"]
 
     coins = coin_symbols.map do |coin_symbol|
-      coin_info = {}
-      if params['version'] == 'v8'
-        coin_info = {
-          ticker: "/ticker.json?identifier=#{coin_symbol}&version=#{params['version']}",
-          history: "/history.json?coin=#{coin_symbol}&period=2017",
-          last14Days: "/history.json?coin=#{coin_symbol}&period=14days",
-          identifier: coin_symbol,
-          periods: all_history.select { |e| e.include?("/history/#{coin_symbol}_") }.map { |e| e.split('_').last.split('.').first }
-        }
-      else
-        coin_info = {
-          ticker: "/ticker.json?select=#{coin_symbol}&version=#{params['version']}",
-          history: "/history.json?coin=#{coin_symbol}&year=2017",
-          last14Days: "/history.json?coin=#{coin_symbol}&period=14days",
-          symbol: coin_symbol
-        }
-      end
-
-      coin_info
+      {
+        ticker: "/ticker.json?identifier=#{coin_symbol}&version=#{params['version']}",
+        history: "/history.json?coin=#{coin_symbol}&period=2017",
+        last14Days: "/history.json?coin=#{coin_symbol}&period=14days",
+        identifier: coin_symbol,
+        periods: all_history.select { |e| e.include?("/history/#{coin_symbol}_") }.map { |e| e.split('_').last.split('.').first }
+      }
     end
 
     @result = {

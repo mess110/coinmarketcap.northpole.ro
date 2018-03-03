@@ -110,21 +110,11 @@ def to_v6_format coin
   coin_clone
 end
 
-def v6_to_v8_format coin, mapping
-  coin['identifier'] = mapping['identifier']
-  coin
-end
-
 def write_one coin
   # version 1
   write("#{BASE_PATH}/#{coin['symbol'].downcase}.json", to_v1_format(coin))
 
-  # version 6
-  coin_path = "#{BASE_PATH}/v6/#{coin['symbol']}.json"
   v6_coin = to_v6_format(coin)
-  write(coin_path, v6_coin)
-  write_history(v6_coin, v6_coin['symbol'], 'v6')
-  write_hourly(v6_coin, v6_coin['symbol'], 'v6')
 
   # version 8
   return if coin['identifier'].nil?
@@ -188,21 +178,21 @@ def whistory hash, key, coin, path
 end
 
 # writes all.json for all API versions.
-def write_all coin
+def write_all coins
   # version 1
   h = {
-    "timestamp"=> coin['timestamp'],
+    "timestamp"=> coins['timestamp'],
     "markets"=> []
   }
-  coin['markets'].each do |c|
+  coins['markets'].each do |c|
     h['markets'] << to_v1_format(c)
   end
   write("#{BASE_PATH}/all.json", h)
 
-  # version 6
-  all_clone = coin.clone
+  # version 8
+  all_clone = coins.clone
   all_clone['markets'] = all_clone['markets'].map { |e| to_v6_format(e) }
-  write("#{BASE_PATH}/v6/all.json", all_clone)
+  write("#{BASE_PATH}/v8/all/all.json", all_clone)
 end
 
 def get_global_data markets
@@ -346,9 +336,8 @@ end
 def mkdirs
   mkdir(BASE_PATH, 'btc')
   mkdir(BASE_PATH, 'usd')
-  mkdir(BASE_PATH, 'v6')
-  mkdir(BASE_PATH, 'v6/history')
   mkdir(BASE_PATH, 'v8')
+  mkdir(BASE_PATH, 'v8/all')
   mkdir(BASE_PATH, 'v8/history')
   mkdir(BASE_PATH, 'v8/logos')
   LOGO_SIZES.each do |size|
@@ -368,56 +357,6 @@ def run_script
 
   now = Time.now
   @logger.info "Script finished at #{now}. (#{(now - @ts).to_i} seconds)"
-end
-
-def convert_history_v6_v8
-  mkdirs
-
-  json_data = get_json_data('#currencies-all')
-
-  Dir["#{BASE_PATH}/v6/history/*.json"].each do |path|
-    hash = JSON.parse(File.read(path))
-    next if hash['history'].nil?
-    next if hash['history'].empty?
-
-    coin_symbol_pth = path.split('/').last.split('_')
-    old_pth = coin_symbol_pth.pop
-    coin_symbol = coin_symbol_pth.join('_')
-    mapping = json_data['markets'].select { |e| e['symbol'] == coin_symbol }.last
-
-    hash['history'].keys.each do |day|
-      target = hash['history'][day]
-      next if hash['history'][day]['position'].is_a? Numeric
-      hash['history'][day] = v6_to_v8_format(target, mapping)
-    end
-    next if mapping.nil?
-    new_path = "#{BASE_PATH}/v8/history/" + [mapping['identifier'], old_pth].join('_')
-    write(new_path, hash)
-  end
-end
-
-def update_to_volume_v6
-  mkdirs
-  Dir["#{BASE_PATH}/v6/history/*.json"].each do |path|
-    hash = JSON.parse(File.read(path))
-    next if hash['history'].nil?
-    next if hash['history'].empty?
-    hash['history'].keys.each do |day|
-      target = hash['history'][day]
-      next if !target['volume24'].is_a?(Numeric)
-      volume_hash = {}
-      target['price'].keys.each do |ec|
-        btc_price = BigDecimal(target['price'][ec].to_s) / BigDecimal(target['price']['btc'].to_s)
-        if target['volume24'].nil? || btc_price.nan?
-          volume_hash[ec] = 0.to_f
-        else
-          volume_hash[ec] = (BigDecimal(target['volume24'].to_s) * btc_price).to_f
-        end
-      end
-      target['volume24'] = volume_hash
-    end
-    write(path, hash)
-  end
 end
 
 def dl_logos
@@ -449,8 +388,6 @@ List of commands:
 
   * run - queries coinmarketcap.com, parses the data and writes it to disk
   * logos - download all logos from coinmarketcap.com
-  * convert_history_v6_v8 - converts history from v6 to v8
-  * update_to_volume_v6
   * help - this text
 
 Example usage:
@@ -470,10 +407,6 @@ else
     run_script
   when 'logos'
     dl_logos
-  when 'update_to_volume_v6'
-    update_to_volume_v6
-  when 'convert_history_v6_v8'
-    convert_history_v6_v8
   else
     help
   end
