@@ -11,7 +11,7 @@ Install
 
 # Setup
 
-rvm install 2.1.0
+rvm install 2.4.3
 
 git clone git@github.com:mess110/coinmarketcap.northpole.ro.git coinmarketcap-api
 
