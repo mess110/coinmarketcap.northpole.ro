@@ -21,6 +21,10 @@ def coin(identifier = 'bitcoin')
   JSON.parse(File.read('public/api/v8/bitcoin.json'))
 end
 
+def coin_history(identifier = 'bitcoin')
+  JSON.parse(File.read("public/api/v8/history/bitcoin_#{Time.now.year}.json"))
+end
+
 RSpec.configure do |config|
   config.before(:all) {}
   config.after(:all) {}
