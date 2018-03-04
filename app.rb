@@ -66,7 +66,7 @@ class Ki::Model
     item = MongoCache.find(key: key).first
     return if item.nil?
     return if item['ts'] + hours * 60 * 60 < Time.now.to_i
-    item
+    item['item']
   end
 end
 
