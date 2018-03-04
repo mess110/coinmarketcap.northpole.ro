@@ -1,0 +1,20 @@
+#!/bin/sh
+
+case $1 in
+   config)
+        cat <<'EOM'
+graph_title script.rb runtime
+graph_vlabel zzzz
+zzzz.label zzzz
+graph_args --base 1000 -l 0
+graph_scale no
+graph_category system
+zzzz.critical 180
+graph_info How long it takes for script.rb to run
+zzzz.info How long it takes for script.rb to run
+EOM
+        exit 0;;
+esac
+
+printf "zzzz.value "
+grep 'script_is_finished' /home/kiki/coinmarketcap.northpole.ro/current/logs/script.log | tail -n 1 | cut -c 70-
