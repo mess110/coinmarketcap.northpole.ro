@@ -380,6 +380,7 @@ def run_script
 
   now = Time.now
   @logger.info "Wrote #{@write_count[:success]} times and failed #{@write_count[:fail]} times."
+  @logger.info "script_is_finished #{(now - @ts).to_i}"
   @logger.info "Script finished at #{now}. (#{(now - @ts).to_i} seconds)"
 end
 

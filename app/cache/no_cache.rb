@@ -4,7 +4,6 @@ module NoCache
   end
 
   def add_to_cache path, item
-    item
   end
 
   def get_from_cache path, hours
