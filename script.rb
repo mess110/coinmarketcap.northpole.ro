@@ -16,6 +16,10 @@ COIN_KEYS = ['position', 'name', 'symbol', 'identifier', 'category', 'marketCap'
 CURRENCIES = ['usd', 'btc']
 EXCHANGE_CURRENCIES = %w(usd aud brl cad chf clp cny czk dkk eur gbp hkd huf idr ils inr jpy krw mxn myr nok nzd php pkr pln rub sek sgd thb try twd zar)
 LOGO_SIZES = %w(16x16 32x32 64x64 128x128)
+@write_count = {
+  fail: 0,
+  success: 0
+}
 
 @logger = Logger.new(File.join(current_folder, 'logs', 'script.log'), 'weekly')
 @logger.level = Logger::INFO
@@ -40,8 +44,10 @@ end
 
 def write path, hash
   File.open(path,'w') { |f| f.write(hash.to_json) }
+  @write_count[:success] += 1
   @logger.debug "Success: #{path}"
 rescue => e
+  @write_count[:fail] += 1
   @logger.error "could not write #{path}"
   @logger.debug e.backtrace
 end
@@ -137,21 +143,18 @@ end
 def write_hourly coin, path_key, vkey
   time_at = Time.at(@ts)
   path = "#{BASE_PATH}/#{vkey}/history/#{path_key}_14days.json"
-
-  if !File.exist?(path) || File.zero?(path)
-    write(path, { 'symbol' => coin['symbol'], 'identifier' => coin['identifier'], 'history' => {} })
-  end
-
-  hash = JSON.parse(File.read(path))
+  hash = read_history_path(path, coin)
   key = time_at.strftime('%H-%d-%m-%Y')
+  added = ahistory hash, key, coin, path
 
-  whistory hash, key, coin, path
-
-  to_cleanup_hash = JSON.parse(File.read(path))
-  while to_cleanup_hash['history'].keys.size > 24 * 14
-    to_cleanup_hash['history'].delete(to_cleanup_hash['history'].keys.first)
+  removed = false
+  while hash['history'].keys.size > 24 * 14
+    removed = true
+    hash['history'].delete(hash['history'].keys.first)
   end
-  write(path, to_cleanup_hash)
+  if added || removed
+    write(path, hash)
+  end
 rescue => e
   @logger.error "write_hourly #{coin['identifier']}: #{path}"
   @logger.debug e.backtrace
@@ -160,29 +163,41 @@ end
 def write_history coin, path_key, vkey
   time_at = Time.at(@ts)
   path = "#{BASE_PATH}/#{vkey}/history/#{path_key}_#{time_at.year}.json"
-
-  write(path, { 'symbol' => coin['symbol'], 'identifier' => coin['identifier'], 'history' => {} }) unless File.exist?(path)
-
-  hash = JSON.parse(File.read(path))
+  hash = read_history_path(path, coin)
   key = time_at.strftime('%d-%m-%Y')
-
-  whistory hash, key, coin, path
+  if ahistory hash, key, coin, path
+    write(path, hash)
+  end
 rescue => e
   @logger.error "write_history #{coin['symbol']}: #{path}"
   @logger.debug e.backtrace
 end
 
-def whistory hash, key, coin, path
+def read_history_path(path, coin)
+  if file_ok?(path)
+    JSON.parse(File.read(path))
+  else
+    { 'symbol' => coin['symbol'], 'identifier' => coin['identifier'], 'history' => {} }
+  end
+end
+
+def file_ok? path
+  File.exists?(path) && !File.zero?(path) && File.size?(path) > 10
+end
+
+def ahistory hash, key, coin, path
   if hash['history'].key?(key)
     # we want to keep the "stronger" coin
     if hash['history'][key]['name'] != coin['name']
       hash['history'][key] = coin
-      write(path, hash)
+      true
     end
+    false
   else
     hash['history'][key] = coin
-    write(path, hash)
+    true
   end
+  false
 end
 
 # writes all.json for all API versions.
@@ -364,6 +379,7 @@ def run_script
   write_all json_data
 
   now = Time.now
+  @logger.info "Wrote #{@write_count[:success]} times and failed #{@write_count[:fail]} times."
   @logger.info "Script finished at #{now}. (#{(now - @ts).to_i} seconds)"
 end
 

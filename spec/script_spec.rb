@@ -64,5 +64,10 @@ describe 'script.rb' do
       expect(coin_history['identifier']).to eq 'bitcoin'
       expect(coin_history['history']).to be_a Hash
     end
+
+    it 'has history for today' do
+      target = Time.now.strftime('%d-%m-%Y')
+      expect(coin_history['history'].keys).to include(target)
+    end
   end
 end
