@@ -1,16 +1,8 @@
 require 'ki'
 
-$rabbit_hole = {}
-
-# Overwrite so we don't use mongo at all
-module Ki
-  module Orm
-    class Db
-      def establish_connection
-      end
-    end
-  end
-end
+# root = ::File.dirname(__FILE__)
+# logfile = ::File.join(root,'logs','requests.log')
+# $logger  = ::Logger.new(logfile,'weekly')
 
 class Object
   def blank?
@@ -24,10 +16,6 @@ end
 
 class Ki::Model
   forbid :create, :update, :delete
-
-  def find
-    # overrwrite so we don't use mongo at all
-  end
 
   def allowed_versions
     %w(v8)
@@ -53,38 +41,46 @@ class Ki::Model
     "public/api/#{params['version']}/*.json"
   end
 
+  # If the filesystem timestamp changes we override the item in the cache
   def cache_fs_read path
     # return JSON.parse(File.read(path))
 
-    new_mtime = File.mtime(path)
+    new_mtime = File.mtime(path).to_i
 
-    if $rabbit_hole[path] == nil || $rabbit_hole[path][:ts] != new_mtime
-      $rabbit_hole[path] = {
-        json: JSON.parse(File.read(path)),
-        ts: new_mtime
-      }
+    item = MongoCache.find(key: path).first
+
+    if item.nil? || item['ts'] != new_mtime
+      MongoCache.delete(key: path)
+      item = MongoCache.create(key: path, ts: new_mtime, item: JSON.parse(File.read(path)))
     end
 
-    $rabbit_hole[path][:json].clone
+    item['item'] || item[:item]
   end
 
   def add_to_cache key, item
-    $rabbit_hole[key] = {
-      json: item,
-      ts: Time.now
-    }
+    MongoCache.delete(key: key)
+    MongoCache.create(key: key, item: item, ts: Time.now.to_i)
   end
 
   def get_from_cache key, hours
-    if $rabbit_hole[key] != nil
-      if $rabbit_hole[key][:ts] + hours * 60 * 60 > Time.now
-        return $rabbit_hole[key][:json]
-      end
-    end
+    item = MongoCache.find(key: key).first
+    return if item.nil?
+    return if item['ts'] + hours * 60 * 60 < Time.now.to_i
+    item
   end
 end
 
-class Ticker < Ki::Model
+class MongoCache < Ki::Model
+  forbid :find, :create, :update, :delete
+end
+
+class ApiEndpoint < Ki::Model
+  def find
+    # overrwrite so we don't use mongo at all
+  end
+end
+
+class Ticker < ApiEndpoint
   def after_all
     validate_version
     t_version = params['version']
@@ -129,10 +125,7 @@ class Ticker < Ki::Model
   end
 end
 
-class Api < Ticker
-end
-
-class History < Ki::Model
+class History < ApiEndpoint
   def self.allowed_versions
     %w(v8)
   end
@@ -207,7 +200,7 @@ class History < Ki::Model
   end
 end
 
-class Coins < Ki::Model
+class Coins < ApiEndpoint
   CACHE_KEY = 'coins.json'
 
   def after_all
@@ -241,7 +234,7 @@ class Coins < Ki::Model
   end
 end
 
-class Saturn < Ki::Model
+class Saturn < ApiEndpoint
   def after_all
     @result = cache_fs_read('public/api/v8/history/saturn.json')
   rescue => e
