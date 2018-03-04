@@ -14,7 +14,46 @@ class Object
   end
 end
 
+module CacheManagement
+  def digest key
+    Digest::SHA1.hexdigest key
+  end
+
+  # If the filesystem timestamp changes we override the item in the cache
+  def cache_fs_read path
+    # return JSON.parse(File.read(path))
+    key = digest(path)
+
+    new_mtime = File.mtime(path).to_i
+
+    item = MongoCache.find(key: key).first
+
+    if item.nil? || item['ts'] != new_mtime
+      MongoCache.delete(key: key)
+      item = MongoCache.create(key: key, path: path, ts: new_mtime, item: JSON.parse(File.read(path)))
+    end
+
+    item['item'] || item[:item]
+  end
+
+  def add_to_cache path, item
+    key = digest(path)
+    MongoCache.delete(key: key)
+    MongoCache.create(key: key, path: path, item: item, ts: Time.now.to_i)
+  end
+
+  def get_from_cache path, hours
+    key = digest(path)
+    item = MongoCache.find(key: key).first
+    return if item.nil?
+    return if item['ts'] + hours * 60 * 60 < Time.now.to_i
+    item['item']
+  end
+end
+
 class Ki::Model
+  include CacheManagement
+
   forbid :create, :update, :delete
 
   def allowed_versions
@@ -39,34 +78,6 @@ class Ki::Model
 
   def coin_symbols_dir
     "public/api/#{params['version']}/*.json"
-  end
-
-  # If the filesystem timestamp changes we override the item in the cache
-  def cache_fs_read path
-    # return JSON.parse(File.read(path))
-
-    new_mtime = File.mtime(path).to_i
-
-    item = MongoCache.find(key: path).first
-
-    if item.nil? || item['ts'] != new_mtime
-      MongoCache.delete(key: path)
-      item = MongoCache.create(key: path, ts: new_mtime, item: JSON.parse(File.read(path)))
-    end
-
-    item['item'] || item[:item]
-  end
-
-  def add_to_cache key, item
-    MongoCache.delete(key: key)
-    MongoCache.create(key: key, item: item, ts: Time.now.to_i)
-  end
-
-  def get_from_cache key, hours
-    item = MongoCache.find(key: key).first
-    return if item.nil?
-    return if item['ts'] + hours * 60 * 60 < Time.now.to_i
-    item['item']
   end
 end
 
