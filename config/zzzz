@@ -17,4 +17,4 @@ EOM
 esac
 
 printf "zzzz.value "
-grep 'script_is_finished' /home/kiki/coinmarketcap.northpole.ro/current/logs/script.log | tail -n 1 | cut -c 70-
+grep 'script_is_finished' /home/kiki/coinmarketcap.northpole.ro/current/logs/script.log | tail -n 1 | rev | cut -d\  -f1 | rev
