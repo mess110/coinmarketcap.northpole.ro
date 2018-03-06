@@ -42,7 +42,7 @@ namespace :deploy do
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
-      execute 'source ~/.rvm/environments/ruby-2.4.3@coinmarketcap.2.4.3 && bundle'
+      execute "source ~/.rvm/environments/ruby-2.4.3@coinmarketcap.2.4.3 && cd #{release_path} && bundle"
       execute :touch, release_path.join('tmp/restart.txt')
       # TODO fix this hack
       execute "source ~/.rvm/environments/ruby-2.4.3@coinmarketcap.2.4.3 && cd #{release_path} && rake generate:doc"
