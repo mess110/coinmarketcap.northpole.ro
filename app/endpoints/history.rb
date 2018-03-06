@@ -11,10 +11,6 @@ class History < ApiEndpoint
     %w(array hash)
   end
 
-  def coin_symbols_dir
-    "public/api/#{params['version']}/*.json"
-  end
-
   def validate_format
     if params['format'].present?
       unless valid_formats.include?(params['format'])

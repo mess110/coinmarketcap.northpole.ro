@@ -27,7 +27,17 @@ class Ki::Model
   end
 
   def coin_symbols
-    Dir[coin_symbols_dir].map { |e| e.split('/').last.split('.').first }.sort
+    cache_key = coin_symbols_dir
+
+    data = get_from_cache(cache_key, 24)
+
+    if data.nil?
+      data = Dir[cache_key].map { |e| e.split('/').last.split('.').first }.sort
+
+      add_to_cache(cache_key, data)
+    end
+
+    data
   end
 
   def coin_symbols_dir
