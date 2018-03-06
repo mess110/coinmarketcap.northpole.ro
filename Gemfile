@@ -5,7 +5,8 @@ gem 'capistrano', '3.10.1'
 gem 'rvm-capistrano'
 gem 'highline'
 gem 'redcarpet'
-gem 'ki'
+gem 'rack', '1.6.8'
+gem 'ki', '0.4.8'
 
 group :development do
   gem 'pry'
