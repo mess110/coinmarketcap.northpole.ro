@@ -28,6 +28,7 @@ set :deploy_to, '/home/kiki/coinmarketcap.northpole.ro'
 
 # Default value for linked_dirs is []
 set :linked_dirs, %w{public/api logs}
+append :linked_dirs, '.bundle'
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
