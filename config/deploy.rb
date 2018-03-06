@@ -28,7 +28,7 @@ set :deploy_to, '/home/kiki/coinmarketcap.northpole.ro'
 
 # Default value for linked_dirs is []
 set :linked_dirs, %w{public/api logs}
-append :linked_dirs, '.bundle'
+# append :linked_dirs, '.bundle'
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
@@ -42,10 +42,10 @@ namespace :deploy do
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do
+      execute 'source ~/.rvm/environments/ruby-2.4.3@coinmarketcap.2.4.3 && bundle'
       execute :touch, release_path.join('tmp/restart.txt')
       # TODO fix this hack
       execute "source ~/.rvm/environments/ruby-2.4.3@coinmarketcap.2.4.3 && cd #{release_path} && rake generate:doc"
-      execute :whoami
     end
   end
 

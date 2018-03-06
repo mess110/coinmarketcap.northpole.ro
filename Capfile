@@ -3,7 +3,8 @@ require 'capistrano/setup'
 
 # Includes default deployment tasks
 require 'capistrano/deploy'
-require "capistrano/scm/git"
+
+require 'capistrano/scm/git'
 install_plugin Capistrano::SCM::Git
 
 # Includes tasks from other gems included in your Gemfile
@@ -20,7 +21,7 @@ require 'rvm/capistrano'
 # require 'capistrano/rvm'
 # require 'capistrano/rbenv'
 # require 'capistrano/chruby'
-require 'capistrano/bundler'
+# require 'capistrano/bundler'
 # require 'capistrano/rails/assets'
 # require 'capistrano/rails/migrations'
 
