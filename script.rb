@@ -190,12 +190,12 @@ def ahistory hash, key, coin, path
     # we want to keep the "stronger" coin
     if hash['history'][key]['name'] != coin['name']
       hash['history'][key] = coin
-      true
+      return true
     end
-    false
+    return false
   else
     hash['history'][key] = coin
-    true
+    return true
   end
   false
 end
