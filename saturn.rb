@@ -26,7 +26,7 @@ def read coin
 
   output
 rescue => e
-  puts "saturn.rb: Error #{e} parsing #{coin['symbol']}"
+  puts "saturn.rb: Error #{e.class} parsing #{coin[:symbol]}"
   return {'history' => {}}
 end
 
@@ -91,7 +91,7 @@ def run_script
   coins.each do |coin|
     all_history = read(coin)
 
-    # TODO: what if no history
+    next if all_history.nil?
     meta = all_history['history'].values.last
 
     next if meta.nil?
