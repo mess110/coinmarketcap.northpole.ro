@@ -261,7 +261,7 @@ def get_json_data table_id
     end
 
     begin
-      td_name = tds[1].children[5].text
+      td_name = tds[1].css('a')[1].text.strip
     rescue
       td_name = tds[1].text.strip
     end
