@@ -275,7 +275,7 @@ def get_json_data table_id
     td_market_cap = {}
     td_price = {}
     begin
-      td_available_supply = tds[5].css('a').text.strip
+      td_available_supply = tds[5].css('span').attribute('data-supply').text.strip
       td_available_supply_number = td_available_supply.gsub(',','').to_i
     rescue
       td_available_supply = '?'
@@ -375,6 +375,7 @@ def run_script
 
   json_data['markets'].each do |h|
     write_one h
+    # write_one h if h['symbol'] == 'BTC'
   end
   write_all json_data
 
